@@ -1,20 +1,20 @@
 // =============================================
 // Service Worker – Bildungswege BW
-// Version: 1.0
+// Version: 1.1
 // =============================================
 
-const CACHE_NAME = 'bildungswege-bw-v1';
+const CACHE_NAME = 'bildungswege-bw-v2';
+const BASE_PATH = '/HPMS_App_v1/';
 
-// Alle Dateien die offline verfügbar sein sollen
 const FILES_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/icon-192.png',
-  '/icon-512.png'
+  BASE_PATH,
+  BASE_PATH + 'index.html',
+  BASE_PATH + 'manifest.webmanifest',
+  BASE_PATH + 'icon-192.png',
+  BASE_PATH + 'icon-512.png'
 ];
 
-// ---- INSTALL: Cache befüllen ----
+// ---- INSTALL ----
 self.addEventListener('install', function(event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(function(cache) {
@@ -22,7 +22,6 @@ self.addEventListener('install', function(event) {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
-  // Sofort aktivieren, nicht auf alten SW warten
   self.skipWaiting();
 });
 
@@ -33,32 +32,26 @@ self.addEventListener('activate', function(event) {
       return Promise.all(
         keyList.map(function(key) {
           if (key !== CACHE_NAME) {
-            console.log('[SW] Alter Cache wird gelöscht:', key);
+            console.log('[SW] Alter Cache gelöscht:', key);
             return caches.delete(key);
           }
         })
       );
     })
   );
-  // Sofort alle offenen Tabs übernehmen
   self.clients.claim();
 });
 
-// ---- FETCH: Cache-first Strategie ----
-// Zuerst aus dem Cache laden, bei Misserfolg Netzwerk versuchen
+// ---- FETCH: Cache-first ----
 self.addEventListener('fetch', function(event) {
-  // Nur GET-Anfragen behandeln
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     caches.match(event.request).then(function(cachedResponse) {
       if (cachedResponse) {
-        // Aus Cache laden
         return cachedResponse;
       }
-      // Nicht im Cache: Netzwerk versuchen
       return fetch(event.request).then(function(networkResponse) {
-        // Gültige Antwort im Cache speichern
         if (
           networkResponse &&
           networkResponse.status === 200 &&
@@ -71,9 +64,36 @@ self.addEventListener('fetch', function(event) {
         }
         return networkResponse;
       }).catch(function() {
-        // Offline und nicht im Cache: Fallback auf index.html
-        return caches.match('/index.html');
+        // Offline-Fallback
+        return caches.match(BASE_PATH + 'index.html');
       });
     })
   );
 });
+
+{
+  "name": "Bildungswege Baden-Württemberg",
+  "short_name": "Bildungswege BW",
+  "description": "Finde deinen Weg zum Wunschabschluss – individuell und übersichtlich",
+  "start_url": "/HPMS_App_v1/",
+  "scope": "/HPMS_App_v1/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F7FA",
+  "theme_color": "#0B7BB3",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

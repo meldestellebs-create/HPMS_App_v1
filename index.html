@@ -5110,6 +5110,16 @@ asFilter();
   .sm-cards-wrapper { grid-template-columns: 1fr !important; }
   .sm-table-scroll { -webkit-overflow-scrolling: touch !important; }
   .sm-scroll-hint { display: flex !important; }
+  /* Filter group full width on mobile */
+  .sm-filter-group { min-width: 100% !important; flex: 1 1 100% !important; }
+  /* Stats bar full width */
+  .sm-stats-bar { width: 100%; }
+  /* View toggle full width, centered */
+  #sm-view-toggle { margin-left: 0 !important; width: 100% !important; }
+  /* Reset button full width */
+  .sm-reset-btn { width: 100% !important; text-align: center !important; }
+  /* Header actions stacked */
+  .sm-header-actions { width: 100% !important; }
 }
 
 /* Scroll hint banner - hidden on desktop, shown on mobile */
@@ -5563,7 +5573,7 @@ img, video, iframe, embed, object { max-width: 100%; }
           <option>Landwirtschaftliche Schule</option>
         </select>
       </div>
-      <div class="sm-filter-group" style="min-width:auto;">
+      <div class="sm-filter-group">
         <label>🎓 Zugang</label>
         <select id="sm-access" onchange="smFilter()">
           <option value="">Alle</option>
@@ -5584,7 +5594,7 @@ img, video, iframe, embed, object { max-width: 100%; }
       <div class="sm-stat-pill">Angebote gesamt: <strong id="sm-count-total">0</strong></div>
       <div class="sm-stat-pill">Angezeigt: <strong id="sm-count-shown">0</strong></div>
     </div>
-    <div class="sm-view-toggle" style="margin-left: auto;">
+    <div class="sm-view-toggle" id="sm-view-toggle">
       <button class="sm-view-btn active" id="smv-table" onclick="smSetView('table')">📊 Matrix</button>
       <button class="sm-view-btn" id="smv-cards" onclick="smSetView('cards')">🃏 Schulkarten</button>
     </div>

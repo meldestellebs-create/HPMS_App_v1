@@ -4,6 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bildungswege Baden-Württemberg - Interaktives Tool – step5h</title>
+
+<!-- PWA: Manifest & Icons -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0B7BB3">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS / Apple Support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Bildungswege BW">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
+<!-- Service Worker Registration -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(reg) { console.log('SW registered:', reg.scope); })
+        .catch(function(err) { console.log('SW error:', err); });
+    });
+  }
+</script>
 <style>
 * { 
   margin: 0; 
@@ -5073,6 +5099,31 @@ asFilter();
 @media (max-width: 768px) {
   .sm-filter-row { flex-direction: column; }
   .sm-filter-group { min-width: 100%; }
+  .sm-page { padding: 16px 12px 40px !important; }
+  .sm-header { padding: 20px 16px !important; border-radius: 12px !important; margin-bottom: 16px !important; }
+  .sm-header h1 { font-size: 1.3rem !important; }
+  .sm-header p { font-size: 0.88rem !important; }
+  .sm-filters { padding: 16px !important; }
+  .sm-header-actions { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+  .sm-view-toggle { margin-left: 0 !important; width: 100% !important; }
+  .sm-view-btn { flex: 1 !important; text-align: center !important; }
+  .sm-cards-wrapper { grid-template-columns: 1fr !important; }
+  .sm-table-scroll { -webkit-overflow-scrolling: touch !important; }
+  .sm-scroll-hint { display: flex !important; }
+}
+
+/* Scroll hint banner - hidden on desktop, shown on mobile */
+.sm-scroll-hint {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: #fff8e1;
+  border: 1.5px solid #ffe082;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: #7a5800;
 }
 
 /* ===================================================
@@ -5543,6 +5594,11 @@ img, video, iframe, embed, object { max-width: 100%; }
   <div id="sm-school-badge" style="display:none" class="sm-active-school-badge">
     <span>Gefiltert nach Schule: <strong id="sm-school-badge-name"></strong></span>
     <button onclick="smClearSchool()" title="Filter entfernen">✕</button>
+  </div>
+
+  <!-- Mobile scroll hint (only visible on mobile via CSS) -->
+  <div class="sm-scroll-hint" id="sm-scroll-hint">
+    &#8596; <span>Die Tabelle ist sehr breit &#8211; nach links/rechts wischen. Oder wechsle zu <strong>Schulkarten</strong> für bessere Übersicht.</span>
   </div>
 
   <!-- Table view -->
@@ -8627,6 +8683,18 @@ window.switchTab = function(tabName) {
 // Close menu on Escape key
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeMenu();
+});
+
+// SCHULEN-MATRIX: default to card view on mobile
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.innerWidth <= 768) {
+    // Wait a tick for smSetView to be defined by the matrix script
+    setTimeout(function() {
+      if (typeof smSetView === 'function') {
+        smSetView('cards');
+      }
+    }, 100);
+  }
 });
 </script>
 

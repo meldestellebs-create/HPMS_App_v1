@@ -3581,6 +3581,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
   </div>
 </div>
+<script>
+(function() {
+  function initSchoolSearch() {
+    var input = document.getElementById('school-search');
+    var countEl = document.getElementById('school-search-count');
+    var cards = document.querySelectorAll('#schools-grid .school-card');
+    if (!input || !cards.length) return;
+
+    // Show count initially
+    countEl.textContent = cards.length + ' Schulen gefunden';
+
+    input.addEventListener('input', function() {
+      var query = input.value.trim().toLowerCase();
+      var visible = 0;
+      cards.forEach(function(card) {
+        var searchText = (card.getAttribute('data-search') || '') + ' ' + card.innerText;
+        var match = !query || searchText.toLowerCase().indexOf(query) !== -1;
+        card.style.display = match ? '' : 'none';
+        if (match) visible++;
+      });
+      if (query) {
+        countEl.textContent = visible + ' von ' + cards.length + ' Schulen gefunden';
+      } else {
+        countEl.textContent = cards.length + ' Schulen gefunden';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSchoolSearch);
+  } else {
+    initSchoolSearch();
+  }
+})();
+</script>
 <!-- END berufliche-schulen-tab -->
 
 <!-- ==================== TAB 7: Ausbildungssuche ==================== -->

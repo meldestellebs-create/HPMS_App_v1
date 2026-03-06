@@ -1179,6 +1179,10 @@ img, video, iframe, embed, object { max-width: 100%; }
       <span class="menu-icon">🔤</span>
       <span class="menu-label">Azubi A–Z</span>
     </button>
+    <button class="menu-item" data-tab="links-recherche" onclick="switchTabMobile('links-recherche', '🔗 Links & Recherche', this)">
+      <span class="menu-icon">🔗</span>
+      <span class="menu-label">Links & Recherche</span>
+    </button>
   </nav>
 </div>
 
@@ -7587,33 +7591,12 @@ document.addEventListener('DOMContentLoaded', function() {
   margin-bottom: 10px;
 }
 .az-school-box strong { color: var(--text-dark); }
-.az-links-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.az-link-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.az-link-btn.bibb {
-  background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-  color: #fff;
-}
-.az-link-btn.bibb:hover { opacity: 0.85; }
-.az-link-btn.stellen {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border: 1px solid #c8e6c9;
-}
-.az-link-btn.stellen:hover { background: #c8e6c9; }
+
+
+
+
+
+
 
 /* EMPTY STATE */
 .az-empty {
@@ -7951,12 +7934,10 @@ const azData = [
   { name: "Fachkraft für Hafenlogistik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Berufsschule Hamburg (bundesweit)", desc: "Koordiniert den Güterumschlag in Häfen und Terminals.", bibb: "Fachkraft+für+Hafenlogistik" },
   { name: "Fachkraft für Holz- und Bautenschutzarbeiten", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Schützt Holz- und Baukonstruktionen vor Schädlingen und Feuchtigkeit.", bibb: "Fachkraft+für+Holz-+und+Bautenschutzarbeiten" },
   { name: "Fachkraft für Hygieneüberwachung", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Kontrolliert Hygienemaßnahmen in Lebensmittel- und Gesundheitsbetrieben.", bibb: "Fachkraft+für+Hygieneüberwachung" },
-  { name: "Fachangestellte/r für Arbeitsmarktdienstleistungen", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Berät und vermittelt Arbeitsuchende bei der Agentur für Arbeit.", bibb: "Fachangestellte" },
   { name: "Disponent/in – Integrierte Leitstelle", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Feuerwehrschule Stuttgart", desc: "Koordiniert Einsätze von Feuerwehr, Rettungsdienst und Polizei in Leitstellen.", bibb: "Disponent" },
   { name: "Erzieher/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Fachschule für Sozialpädagogik Stuttgart; Hedwig-Dohm-Schule Stuttgart", desc: "Betreut, fördert und bildet Kinder und Jugendliche in pädagogischen Einrichtungen.", bibb: "Erzieher" },
   { name: "Sozialassistent/in", dauer: "2 J.", abschluss: "HSA", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Unterstützt in sozialen Einrichtungen: Pflegeheime, Kitas, Behinderteneinrichtungen.", bibb: "Sozialassistent" },
   { name: "Fachkraft Frühpädagogik", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart; Steinbeis-Schule Stuttgart", desc: "Betreut und fördert Kleinkinder in Krippen und Kitas.", bibb: "Fachkraft+Frühpädagogik" },
-  { name: "Ergotherapeut/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Ergotherapie Stuttgart; Hochschule Esslingen", desc: "Unterstützt Menschen mit körperlichen oder psychischen Einschränkungen durch gezielte Therapie.", bibb: "Ergotherapeut" },
   { name: "Logopäde/Logopädin", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Logopädie Stuttgart; Diakonieklinikum Stuttgart", desc: "Diagnostiziert und therapiert Sprach-, Sprech- und Stimmstörungen.", bibb: "Logopäde" },
   { name: "Physiotherapeut/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Physiotherapie Stuttgart; Klinikum Stuttgart", desc: "Behandelt Bewegungs- und Funktionseinschränkungen mit physikalischen Methoden.", bibb: "Physiotherapeut" },
   { name: "Heilerziehungspfleger/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Fachschule für Heilerziehungspflege Stuttgart; Evangelisches Bildungszentrum Stuttgart", desc: "Unterstützt Menschen mit Behinderungen bei der Alltagsbewältigung.", bibb: "Heilerziehungspfleger" },
@@ -8210,9 +8191,7 @@ window.azFilter = function() {
   grid.innerHTML = results.map((d, i) => {
     const abschlussClass = d.abschluss === 'HSA' ? 'hsa' : d.abschluss === 'MR' ? 'mr' : 'fhr';
     const kammerClass = d.kammer === 'IHK' ? 'ihk' : d.kammer === 'HWK' ? 'hwk' : d.kammer === 'Schulisch' ? 'sch' : 'ihk';
-    const bibbUrl = `https://www.bibb.de/dienst/berufesuche/de/index_berufesuche.php/source/go/profession.html?dkz=${encodeURIComponent(d.name)}`;
-    const stellenUrl = `https://www.azubi.de/ausbildungsplatz/stadt/stuttgart?beruf=${encodeURIComponent(d.name)}`;
-    const cfg = feldConfig[d.feld] || { icon: '📋' };
+        const cfg = feldConfig[d.feld] || { icon: '📋' };
     return `
 <div class="az-card" id="az-card-${i}">
   <div class="az-card-head" onclick="azToggle(${i})">
@@ -8233,10 +8212,6 @@ window.azFilter = function() {
     <p class="az-desc">${eld(d.desc||'')}</p>
     <div class="az-school-box">
       <strong>📍 Berufsschule Region Stuttgart:</strong><br>${eld(d.schule)}
-    </div>
-    <div class="az-links-row">
-      <a href="${bibbUrl}" target="_blank" rel="noopener" class="az-link-btn bibb">📘 Infos beim BIBB</a>
-      <a href="${stellenUrl}" target="_blank" rel="noopener" class="az-link-btn stellen">🔍 Stellen Stuttgart</a>
     </div>
   </div>
 </div>`;
@@ -8335,3 +8310,192 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
+<!-- ==================== TAB: Links & Recherche ==================== -->
+<section id="links-recherche-tab" class="tab-content">
+<style>
+.lr-wrapper {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 36px 24px 48px;
+}
+.lr-hero {
+  background: linear-gradient(135deg, #0b7bb3 0%, #1a3c6e 100%);
+  border-radius: 18px;
+  padding: 32px 32px 28px;
+  margin-bottom: 36px;
+  color: #fff;
+}
+.lr-hero h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+.lr-hero p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0;
+  max-width: 580px;
+  line-height: 1.5;
+}
+.lr-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 0 0 16px;
+}
+.lr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  margin-bottom: 40px;
+}
+.lr-card {
+  background: #fff;
+  border: 2px solid #e8ecf0;
+  border-radius: 16px;
+  padding: 22px 22px 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+.lr-card:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 6px 22px rgba(11,123,179,0.13);
+  transform: translateY(-3px);
+}
+.lr-card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.lr-card-body {
+  flex: 1;
+}
+.lr-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 5px;
+}
+.lr-card-desc {
+  font-size: 0.88rem;
+  color: var(--text-gray);
+  line-height: 1.5;
+  margin: 0;
+}
+.lr-card-domain {
+  font-size: 0.78rem;
+  color: #aab0ba;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.lr-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--primary-blue);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-top: 4px;
+  align-self: flex-start;
+  transition: background 0.2s;
+}
+.lr-card:hover .lr-card-cta {
+  background: #0a6a9c;
+}
+@media (max-width: 600px) {
+  .lr-wrapper { padding: 20px 16px 40px; }
+  .lr-hero { padding: 22px 18px; }
+  .lr-hero h1 { font-size: 1.4rem; }
+  .lr-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="lr-wrapper">
+  <div class="lr-hero">
+    <h1>🔗 Links & Recherche</h1>
+    <p>Die wichtigsten Portale für die Ausbildungssuche – von offiziellen Datenbanken bis zu Stellenbörsen.</p>
+  </div>
+
+  <p class="lr-section-title">Offizielle Berufe-Datenbanken</p>
+  <div class="lr-grid">
+
+    <a class="lr-card" href="https://www.bibb.de/dienst/berufesuche/de/index_berufesuche.php" target="_blank" rel="noopener">
+      <div class="lr-card-icon">📘</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">BIBB Berufesuche</div>
+        <p class="lr-card-desc">Offizielle Datenbank aller anerkannten Ausbildungsberufe – mit Ausbildungsordnungen, Anforderungen und Tätigkeitsprofilen.</p>
+        <div class="lr-card-domain">bibb.de</div>
+      </div>
+      <span class="lr-card-cta">Zur Berufesuche →</span>
+    </a>
+
+    <a class="lr-card" href="https://www.arbeitsagentur.de/bildung/berufe-und-wege" target="_blank" rel="noopener">
+      <div class="lr-card-icon">🎓</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">Mein Beruf – Agentur für Arbeit</div>
+        <p class="lr-card-desc">Das Berufsportal der Bundesagentur für Arbeit: Berufe entdecken, Wege zur Ausbildung verstehen, praktische Tipps für Bewerbung.</p>
+        <div class="lr-card-domain">arbeitsagentur.de</div>
+      </div>
+      <span class="lr-card-cta">Zu Mein Beruf →</span>
+    </a>
+
+    <a class="lr-card" href="https://www.planet-beruf.de/" target="_blank" rel="noopener">
+      <div class="lr-card-icon">🌍</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">Planet Beruf</div>
+        <p class="lr-card-desc">Das Jugendportal der Bundesagentur für Arbeit mit Berufssteckbriefen, Berufswahltest und Infos rund um Ausbildung und Bewerbung.</p>
+        <div class="lr-card-domain">planet-beruf.de</div>
+      </div>
+      <span class="lr-card-cta">Zu Planet Beruf →</span>
+    </a>
+
+  </div>
+
+  <p class="lr-section-title">Ausbildungsplätze finden</p>
+  <div class="lr-grid">
+
+    <a class="lr-card" href="https://www.azubi.de/ausbildungsplatz/stadt/stuttgart" target="_blank" rel="noopener">
+      <div class="lr-card-icon">🔍</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">azubi.de – Stellen Stuttgart</div>
+        <p class="lr-card-desc">Stellenbörse für Ausbildungsplätze in Stuttgart und der Region – direkt nach Beruf und Ort filterbar.</p>
+        <div class="lr-card-domain">azubi.de</div>
+      </div>
+      <span class="lr-card-cta">Jetzt suchen →</span>
+    </a>
+
+    <a class="lr-card" href="https://www.ihk.de/stuttgart/ausbildung" target="_blank" rel="noopener">
+      <div class="lr-card-icon">🏛️</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">IHK Stuttgart – Ausbildung</div>
+        <p class="lr-card-desc">Ausbildungsberufe unter IHK-Trägerschaft in Stuttgart: offizielle Übersicht, Lehrstellenbörse und Ansprechpartner.</p>
+        <div class="lr-card-domain">ihk.de/stuttgart</div>
+      </div>
+      <span class="lr-card-cta">Zur IHK Stuttgart →</span>
+    </a>
+
+    <a class="lr-card" href="https://www.hwk-stuttgart.de/ausbildung" target="_blank" rel="noopener">
+      <div class="lr-card-icon">🔨</div>
+      <div class="lr-card-body">
+        <div class="lr-card-title">HWK Stuttgart – Ausbildung</div>
+        <p class="lr-card-desc">Handwerkskammer Stuttgart: Ausbildungsberufe im Handwerk, Lehrstellenbörse und Infos zur Handwerksausbildung in der Region.</p>
+        <div class="lr-card-domain">hwk-stuttgart.de</div>
+      </div>
+      <span class="lr-card-cta">Zur HWK Stuttgart →</span>
+    </a>
+
+  </div>
+</div>
+</section>
+<!-- ==================== END TAB: Links & Recherche ==================== -->
+

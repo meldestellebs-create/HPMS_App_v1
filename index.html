@@ -1175,6 +1175,10 @@ img, video, iframe, embed, object { max-width: 100%; }
       <span class="menu-icon">🤝</span>
       <span class="menu-label">Unterstützung</span>
     </button>
+    <button class="menu-item" data-tab="azubi-az" onclick="switchTabMobile('azubi-az', '🔤 Azubi A–Z', this)">
+      <span class="menu-icon">🔤</span>
+      <span class="menu-label">Azubi A–Z</span>
+    </button>
   </nav>
 </div>
 
@@ -7266,6 +7270,1004 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div><!-- END ust-wrapper -->
 </div><!-- END unterstuetzung-tab -->
+
+<!-- ==================== TAB: Azubi A–Z ==================== -->
+<div id="azubi-az-tab" class="tab-content">
+<style>
+/* ===== AZUBI A-Z TAB STYLES ===== */
+.az-wrapper {
+  min-height: calc(100vh - 130px);
+  background: var(--bg-light);
+}
+
+/* BERUFSFELD STARTSCREEN */
+.az-startscreen {
+  padding: 32px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.az-startscreen h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 8px;
+}
+.az-startscreen p {
+  color: var(--text-gray);
+  font-size: 0.95rem;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+.az-feld-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.az-feld-btn {
+  background: #fff;
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.az-feld-btn:hover {
+  border-color: var(--primary-blue);
+  box-shadow: 0 4px 16px rgba(11,123,179,0.12);
+  transform: translateY(-2px);
+}
+.az-feld-btn .az-feld-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+.az-feld-btn .az-feld-name { font-size: 0.92rem; font-weight: 700; color: var(--text-dark); display: block; }
+.az-feld-btn .az-feld-count { font-size: 0.8rem; color: var(--text-gray); display: block; margin-top: 3px; }
+.az-alle-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 6px;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.az-alle-btn:hover { opacity: 0.9; }
+
+/* MAIN BROWSE VIEW */
+.az-browse {
+  display: none;
+}
+.az-browse.visible {
+  display: block;
+}
+.az-container {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: calc(100vh - 130px);
+}
+.az-sidebar {
+  background: #fff;
+  border-right: 2px solid var(--border-color);
+  padding: 24px 20px;
+  overflow-y: auto;
+  position: sticky;
+  top: 54px;
+  max-height: calc(100vh - 54px);
+}
+.az-main {
+  background: var(--bg-light);
+  padding: 24px;
+  overflow-y: auto;
+}
+.az-sidebar h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 4px;
+}
+.az-sidebar .az-sub {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+.az-filter-section { margin-bottom: 18px; }
+.az-filter-label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-dark);
+  margin-bottom: 7px;
+}
+.az-search-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.az-search-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(11,123,179,0.1);
+}
+.az-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.az-chip {
+  padding: 6px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #fff;
+  color: var(--text-gray);
+  transition: all 0.18s;
+  font-family: inherit;
+}
+.az-chip:hover { border-color: var(--primary-blue); color: var(--primary-blue); }
+.az-chip.active { background: var(--primary-blue); border-color: var(--primary-blue); color: #fff; }
+.az-chip.feld-active { background: var(--primary-purple); border-color: var(--primary-purple); color: #fff; }
+.az-chip.kammer-active { background: #e65100; border-color: #e65100; color: #fff; }
+.az-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--primary-blue);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+.az-back-btn:hover { text-decoration: underline; }
+.az-reset-btn {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.az-reset-btn:hover { border-color: var(--accent-magenta); color: var(--accent-magenta); background: #fff0f4; }
+.az-legend {
+  background: var(--bg-light);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 18px;
+  font-size: 0.78rem;
+  color: var(--text-gray);
+  line-height: 1.8;
+}
+.az-legend strong { color: var(--text-dark); }
+
+/* STATS BAR */
+.az-stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.az-stats-bar .count { font-size: 1.2rem; font-weight: 700; color: var(--primary-blue); }
+.az-stats-bar .count-label { font-size: 0.88rem; color: var(--text-gray); margin-left: 5px; }
+.az-sort-select {
+  padding: 7px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--text-dark);
+  cursor: pointer;
+  background: #fff;
+}
+
+/* CARDS GRID */
+.az-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 14px;
+}
+.az-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 2px solid var(--border-color);
+  border-left: 5px solid var(--primary-blue);
+  overflow: hidden;
+  transition: all 0.2s;
+}
+.az-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.09); }
+.az-card-head {
+  padding: 16px 18px 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.az-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.az-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.3;
+  flex: 1;
+}
+.az-card-badges { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; }
+.az-badge {
+  padding: 3px 9px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.az-badge.hsa { background: #e3f2fd; color: #1565c0; }
+.az-badge.mr  { background: #f3e5f5; color: #6a1b9a; }
+.az-badge.fhr { background: #fff8e1; color: #e65100; }
+.az-badge.ihk { background: #e8f5e9; color: #2e7d32; }
+.az-badge.hwk { background: #fbe9e7; color: #bf360c; }
+.az-badge.sch { background: #e8eaf6; color: #283593; }
+.az-card-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.az-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  color: var(--text-gray);
+}
+.az-meta-item strong { color: var(--text-dark); }
+.az-feld-tag {
+  display: inline-block;
+  background: #EDE7F6;
+  color: #4527a0;
+  padding: 2px 9px;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.az-expand-icon {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  margin-top: 2px;
+  float: right;
+}
+/* EXPANDABLE BODY */
+.az-card-body {
+  display: none;
+  padding: 0 18px 16px;
+  border-top: 1px solid var(--border-color);
+}
+.az-card-body.open { display: block; }
+.az-card-body .az-desc {
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+.az-school-box {
+  background: var(--bg-light);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  color: var(--text-gray);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.az-school-box strong { color: var(--text-dark); }
+.az-links-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.az-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.az-link-btn.bibb {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+  color: #fff;
+}
+.az-link-btn.bibb:hover { opacity: 0.85; }
+.az-link-btn.stellen {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+.az-link-btn.stellen:hover { background: #c8e6c9; }
+
+/* EMPTY STATE */
+.az-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-gray);
+}
+.az-empty .emoji { font-size: 3rem; margin-bottom: 12px; display: block; }
+.az-empty h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--text-dark); }
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .az-container { grid-template-columns: 1fr; }
+  .az-sidebar {
+    border-right: none;
+    border-bottom: 2px solid var(--border-color);
+    position: static;
+    max-height: none;
+  }
+  .az-feld-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .az-feld-grid { grid-template-columns: repeat(2, 1fr); }
+  .az-cards-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="az-wrapper">
+
+  <!-- STARTSCREEN: Berufsfeld wählen -->
+  <div class="az-startscreen" id="az-startscreen">
+    <h2>🔤 Azubi A–Z</h2>
+    <p>Entdecke alle anerkannten Ausbildungsberufe. Wähle zuerst ein Berufsfeld – oder schau dir alle auf einmal an.</p>
+    <div class="az-feld-grid" id="az-feld-grid">
+      <!-- Dynamisch befüllt -->
+    </div>
+    <button class="az-alle-btn" onclick="azShowAlle()">🔍 Alle Ausbildungsberufe anzeigen</button>
+  </div>
+
+  <!-- BROWSE VIEW -->
+  <div class="az-browse" id="az-browse">
+    <div class="az-container">
+
+      <!-- SIDEBAR -->
+      <div class="az-sidebar">
+        <button class="az-back-btn" onclick="azGoBack()">← Berufsfelder</button>
+        <h2>🔤 Azubi A–Z</h2>
+        <p class="az-sub">Alle anerkannten Ausbildungsberufe in Deutschland – mit Infos zur Berufsschule in der Region Stuttgart.</p>
+
+        <div class="az-filter-section">
+          <label class="az-filter-label">🔤 Berufsname suchen</label>
+          <input type="text" class="az-search-input" id="az-search" placeholder="z. B. Mechatroniker, Koch …" oninput="azFilter()">
+        </div>
+
+        <div class="az-filter-section">
+          <label class="az-filter-label">🎓 Schulabschluss</label>
+          <div class="az-chips" id="az-abschluss-chips">
+            <button class="az-chip active" onclick="azSetAbschluss(this, '')">Alle</button>
+            <button class="az-chip" onclick="azSetAbschluss(this, 'HSA')">Hauptschulabschluss</button>
+            <button class="az-chip" onclick="azSetAbschluss(this, 'MR')">Mittlere Reife</button>
+            <button class="az-chip" onclick="azSetAbschluss(this, 'FHR')">FHR / Abitur</button>
+          </div>
+        </div>
+
+        <div class="az-filter-section">
+          <label class="az-filter-label">🏛️ Kammer / Träger</label>
+          <div class="az-chips" id="az-kammer-chips">
+            <button class="az-chip active" onclick="azSetKammer(this, '')">Alle</button>
+            <button class="az-chip" onclick="azSetKammer(this, 'IHK')">IHK</button>
+            <button class="az-chip" onclick="azSetKammer(this, 'HWK')">HWK</button>
+            <button class="az-chip" onclick="azSetKammer(this, 'Schulisch')">Schulisch</button>
+            <button class="az-chip" onclick="azSetKammer(this, 'Sonstige')">Sonstige</button>
+          </div>
+        </div>
+
+        <div class="az-filter-section">
+          <label class="az-filter-label">🏭 Berufsfeld</label>
+          <div class="az-chips" id="az-feld-chips">
+            <button class="az-chip active" onclick="azSetFeld(this, '')">Alle Felder</button>
+          </div>
+        </div>
+
+        <button class="az-reset-btn" onclick="azReset()">↺ Filter zurücksetzen</button>
+
+        <div class="az-legend">
+          <strong>Legende</strong><br>
+          <strong>HSA</strong> = Hauptschulabschluss<br>
+          <strong>MR</strong> = Mittlere Reife<br>
+          <strong>FHR</strong> = Fachhochschulreife / Abitur<br>
+          <strong>IHK</strong> = Industrie- und Handelskammer<br>
+          <strong>HWK</strong> = Handwerkskammer<br>
+          <strong>Schulisch</strong> = Schulische Ausbildung
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="az-main">
+        <div class="az-stats-bar">
+          <div>
+            <span class="count" id="az-count">—</span>
+            <span class="count-label">Berufe gefunden</span>
+          </div>
+          <select class="az-sort-select" id="az-sort" onchange="azFilter()">
+            <option value="az">A–Z</option>
+            <option value="za">Z–A</option>
+            <option value="dauer">Kürzeste Ausbildung zuerst</option>
+          </select>
+        </div>
+        <div class="az-cards-grid" id="az-cards-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+
+// ====================================================
+// DATEN: ~325 anerkannte Ausbildungsberufe
+// Felder: name, dauer, abschluss, kammer, feld, schule, bibb (Suchbegriff für BIBB-Link), desc
+// ====================================================
+const azData = [
+  { name: "Agrarwirtschaftlich-technische/r Assistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Unterstützt in landwirtschaftlichen Laboren und Betrieben bei Analysen und Versuchen.", bibb: "Agrarwirtschaftlich-technische" },
+  { name: "Altenpflegehelfer/in", dauer: "1 J.", abschluss: "HSA", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Pflegeschulen Stuttgart (Marienhospital, Klinikum Stuttgart)", desc: "Grundpflege älterer Menschen in Pflegeheimen und ambulanten Diensten – Einstiegsberuf.", bibb: "Altenpflegehelfer" },
+  { name: "Anästhesietechnische/r Assistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Robert-Bosch-Krankenhaus Stuttgart; Vinzenz von Paul Hospital Rottweil", desc: "Unterstützt Anästhesisten bei Narkose und Patientenüberwachung im OP.", bibb: "Anästhesietechnische" },
+  { name: "Änderungsschneider/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Ändert und repariert Kleidungsstücke in Schneidereien und Reinigungen.", bibb: "Änderungsschneider" },
+  { name: "Anlagenmechaniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Elektro & Technik", schule: "Robert-Mayer-Schule Stuttgart", desc: "Montiert und wartet Rohrleitungs- und Behälteranlagen in der Industrie.", bibb: "Anlagenmechaniker" },
+  { name: "Anlagenmechaniker/in – Sanitär, Heizung & Klima", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Robert-Mayer-Schule Stuttgart; Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Installiert und wartet Heizungs-, Sanitär- und Klimaanlagen.", bibb: "Anlagenmechaniker" },
+  { name: "Artist/in", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Soziales & Erziehung", schule: "Staatliche Artistenschule Berlin (bundesweit)", desc: "Erlernt Zirkus- und Varietékünste wie Akrobatik, Jonglage und Trapez.", bibb: "Artist" },
+  { name: "Asphaltbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Baut und saniert Fahrbahnen und Plätze mit Asphalt.", bibb: "Asphaltbauer" },
+  { name: "Augenoptiker/in", dauer: "3 J.", abschluss: "MR", kammer: "HWK", feld: "Gesundheit & Pflege", schule: "BSZ Leonberg", desc: "Berät Kunden bei Brillen, misst Sehschärfe und fertigt Brillen an.", bibb: "Augenoptiker" },
+  { name: "Aufbereitungsmechaniker/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Bereitet Rohstoffe und Recyclingmaterialien in Aufbereitungsanlagen auf.", bibb: "Aufbereitungsmechaniker" },
+  { name: "Ausbaufacharbeiter/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Einstiegsberuf im Ausbauhandwerk: Trockenbau, Estrich, Wärmedämmung.", bibb: "Ausbaufacharbeiter" },
+  { name: "Automatenfachmann/-frau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Handel & Verkauf", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Befüllt, wartet und verwaltet Verkaufsautomaten.", bibb: "Automatenfachmann" },
+  { name: "Automobilkaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Kauft und verkauft Fahrzeuge, Ersatzteile und Zubehör im Autohaus.", bibb: "Automobilkaufmann" },
+  { name: "Bäcker/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Backt Brot, Brötchen, Kuchen und Feingebäck.", bibb: "Bäcker" },
+  { name: "Bankkaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart; KSZ Böblingen", desc: "Berät Kunden zu Bankprodukten, Krediten und Geldanlagen.", bibb: "Bankkaufmann" },
+  { name: "Baugeräteführer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Grafenbergschule Schorndorf", desc: "Bedient Baumaschinen wie Bagger, Kräne und Planierraupen.", bibb: "Baugeräteführer" },
+  { name: "Baustoffprüfer/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Prüft Baustoffe wie Beton, Asphalt und Böden im Labor und auf Baustellen.", bibb: "Baustoffprüfer" },
+  { name: "Bauwerksabdichter/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Dichtet Gebäude gegen Feuchtigkeit, Wasser und schädliche Stoffe ab.", bibb: "Bauwerksabdichter" },
+  { name: "Bauwerksmechaniker/in für Abbruch und Betontrenntechnik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Führt Abbrucharbeiten und Betontrennung an Bauwerken durch.", bibb: "Bauwerksmechaniker" },
+  { name: "Bauzeichner/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Erstellt technische Zeichnungen für Hoch-, Tief- und Ingenieurbau.", bibb: "Bauzeichner" },
+  { name: "Behälter- und Apparatebauer/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart", desc: "Baut und wartet Behälter, Tanks und Apparate aus Metall.", bibb: "Behälter-+und+Apparatebauer" },
+  { name: "Berufskraftfahrer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Grafenbergschule Schorndorf; Wilhelm-Maybach-Schule Heilbronn", desc: "Transportiert Güter und Personen mit LKW oder Bus.", bibb: "Berufskraftfahrer" },
+  { name: "Bestattungsfachkraft", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Soziales & Erziehung", schule: "Staatliche Berufsschule Bad Kissingen (bundesweit)", desc: "Berät Angehörige, organisiert Trauerfeiern und bereitet Verstorbene vor.", bibb: "Bestattungsfachkraft" },
+  { name: "Beton- und Stahlbetonbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart; Grafenbergschule Schorndorf", desc: "Erstellt und verarbeitet Beton- und Stahlbetonbauteile.", bibb: "Beton-+und+Stahlbetonbauer" },
+  { name: "Betonfertigteilbauer/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Stellt Betonfertigteile für den Bau in Werken her.", bibb: "Betonfertigteilbauer" },
+  { name: "Binnenschiffer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Berufsschule Duisburg (bundesweit); Schifffahrtsschule Mannheim", desc: "Führt Binnenschiffe auf Flüssen und Kanälen.", bibb: "Binnenschiffer" },
+  { name: "Binnenschifffahrtskapitän/-in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "Berufsschule Duisburg (bundesweit)", desc: "Führt eigenverantwortlich Binnenschiffe und Schubverbände.", bibb: "Binnenschifffahrtskapitän" },
+  { name: "Biologielaborant/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Carl Engler Schule Karlsruhe", desc: "Führt biologische Laboranalysen durch und bereitet Versuche vor.", bibb: "Biologielaborant" },
+  { name: "Biologisch-technische/r Assistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Natur & Umwelt", schule: "Gewerbliche Schule für Gesundheit Stuttgart", desc: "Unterstützt biologische Forschung mit Laboranalysen.", bibb: "Biologisch-technische" },
+  { name: "Bodenleger/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Verlegt alle Arten von Bodenbelägen: PVC, Parkett, Teppich.", bibb: "Bodenleger" },
+  { name: "Bootsbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Staatliche Berufsschule für Holztechnik Rosenheim (bundesweit)", desc: "Baut, repariert und wartet Boote und Schiffe aus Holz und Verbundwerkstoffen.", bibb: "Bootsbauer" },
+  { name: "Böttcher/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Staatl. BS Bamberg (bundesweit)", desc: "Stellt Fässer und Behälter aus Holz her und repariert sie.", bibb: "Böttcher" },
+  { name: "Brauer/in und Mälzer/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Ferdinand-von-Steinbeis-Schule Ulm", desc: "Stellt Bier und Malzprodukte her und bedient Brauanlagen.", bibb: "Brauer" },
+  { name: "Brunnenbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Baut und wartet Brunnen, Grundwassermessstellen und Erdwärmesonden.", bibb: "Brunnenbauer" },
+  { name: "Buchbinder/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Johannes-Gutenberg-Schule Stuttgart", desc: "Bindet Bücher, Zeitschriften und Broschüren und fertigt Einbände.", bibb: "Buchbinder" },
+  { name: "Buchhändler/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Handel & Verkauf", schule: "Johann-Friedrich-von-Cotta-Schule Stuttgart", desc: "Berät Kunden beim Buchkauf und pflegt das Sortiment.", bibb: "Buchhändler" },
+  { name: "Büchsenmacher/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Staatl. BS Suhl/Thüringen (bundesweit)", desc: "Fertigt, wartet und repariert Schusswaffen.", bibb: "Büchsenmacher" },
+  { name: "Bühnenmaler/in und -plastiker/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Louis-Lepoix-Schule Baden-Baden", desc: "Gestaltet Bühnenbilder, malt Kulissen und baut Requisiten für Theater.", bibb: "Bühnenmaler" },
+  { name: "Bühnentänzer/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Staatliche Ballettschule Berlin; John Cranko Schule Stuttgart", desc: "Erlernt klassischen und modernen Bühnentanz für Theater und Oper.", bibb: "Bühnentänzer" },
+  { name: "Chemielaborant/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Führt chemische Analysen und Versuche im Labor durch.", bibb: "Chemielaborant" },
+  { name: "Chemikant/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Bedient und überwacht chemische Produktionsanlagen.", bibb: "Chemikant" },
+  { name: "Chirurgiemechaniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Gesundheit & Pflege", schule: "Kerschensteinerschule Stuttgart", desc: "Stellt und repariert chirurgische Instrumente und medizinische Geräte.", bibb: "Chirurgiemechaniker" },
+  { name: "Dachdecker/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Heinrich-Hübsch-Schule Karlsruhe", desc: "Deckt Dächer, dämmt und dichtet Gebäude ab.", bibb: "Dachdecker" },
+  { name: "Destillateur/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Ferdinand-von-Steinbeis-Schule Ulm", desc: "Brennt und destilliert alkoholische Getränke wie Schnaps und Whisky.", bibb: "Destillateur" },
+  { name: "Diätassistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Diätschule Stuttgart (Klinikum Stuttgart)", desc: "Berät Patienten zur Ernährung und erstellt Diätpläne in Kliniken.", bibb: "Diätassistent" },
+  { name: "Drechsler/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Gewerbliche Schule für Holztechnik Stuttgart", desc: "Fertigt Dreh- und Schnitzarbeiten aus Holz, Knochen und Kunststoff.", bibb: "Drechsler" },
+  { name: "Drogist/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Handel & Verkauf", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Berät zu Körperpflege, Gesundheit und Haushaltsprodukten in Drogerien.", bibb: "Drogist" },
+  { name: "Edelsteinfasser/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatliche Zeichenakademie Hanau (bundesweit)", desc: "Fasst Edelsteine in Schmuck und andere Objekte ein.", bibb: "Edelsteinfasser" },
+  { name: "Eisenbahner/in – Betriebsdienst Lokführer", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "DB Ausbildung bundesweit; BS Louis-Leitz-Schule Stuttgart", desc: "Führt Züge im Personennahverkehr, Güterverkehr und Fernverkehr.", bibb: "Eisenbahner" },
+  { name: "Eisenbahner/in – Zugverkehrssteuerung", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "DB Ausbildung bundesweit; BS Louis-Leitz-Schule Stuttgart", desc: "Steuert und überwacht den Zugbetrieb von Stellwerken aus.", bibb: "Eisenbahner" },
+  { name: "Elektroanlagenmonteur/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Montiert elektrische Anlagen und Betriebsmittel auf Baustellen.", bibb: "Elektroanlagenmonteur" },
+  { name: "Elektroniker/in – Automatisierungs- und Systemtechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart; Robert-Bosch-Schule Stuttgart", desc: "Installiert und programmiert Automatisierungssysteme in der Industrie.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Betriebstechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Installiert und wartet elektrische Anlagen in Industriebetrieben.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Energie- und Gebäudetechnik", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart; Gewerbliche Schule Waiblingen", desc: "Installiert Elektro- und Gebäudetechnik in Gebäuden.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Gebäude- und Infrastruktursysteme", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Plant und betreibt intelligente Gebäudetechnik und Infrastruktursysteme.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Gebäudesystemintegration", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Vernetzt und integriert Gebäudetechniksysteme (Smart Home, KNX).", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Geräte und Systeme", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Entwickelt und wartet elektronische Geräte und Systeme.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Informations- und Systemtechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Entwickelt elektronische Informations- und Kommunikationssysteme.", bibb: "Elektroniker" },
+  { name: "Elektroniker/in – Maschinen und Antriebstechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart; Robert-Bosch-Schule Stuttgart", desc: "Installiert und wartet elektrische Antriebssysteme in Maschinen.", bibb: "Elektroniker" },
+  { name: "Ergotherapeut/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Ergotherapie Stuttgart; Hochschule Esslingen", desc: "Unterstützt Menschen mit körperlichen oder psychischen Einschränkungen durch gezielte Therapie.", bibb: "Ergotherapeut" },
+  { name: "Estrichleger/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Verlegt Estriche als Unterboden in Neu- und Altbauten.", bibb: "Estrichleger" },
+  { name: "Fachkraft für Gastronomie", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Einstiegsberuf: bedient Gäste und unterstützt in Küche und Service.", bibb: "Fachkraft+für+Gastronomie" },
+  { name: "Fachkraft für Küche", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Einstieg in die Küche: bereitet einfache Speisen zu.", bibb: "Fachkraft+für+Küche" },
+  { name: "Fachkraft für Lagerlogistik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Organisiert Wareneingang, Lagerung und -ausgang.", bibb: "Fachkraft+für+Lagerlogistik" },
+  { name: "Fachkraft für Veranstaltungstechnik", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "Gewerbliche Schule Stuttgart; Robert-Bosch-Schule Stuttgart", desc: "Baut Bühnen auf, betreut Licht- und Tonanlagen bei Events.", bibb: "Fachkraft+für+Veranstaltungstechnik" },
+  { name: "Fachkraft im Fahrbetrieb", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Fährt Busse, Bahnen und andere Fahrzeuge im öffentlichen Nahverkehr.", bibb: "Fachkraft+im+Fahrbetrieb" },
+  { name: "Fachkraft für Schutz und Sicherheit", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Öffentlicher Dienst", schule: "Max-Eyth-Schule Stuttgart", desc: "Schützt Personen und Objekte, führt Ermittlungen durch.", bibb: "Fachkraft+für+Schutz+und+Sicherheit" },
+  { name: "Fachlagerist/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Nimmt Waren an, lagert sie und kommissioniert Aufträge.", bibb: "Fachlagerist" },
+  { name: "Fachinformatiker/in – Anwendungsentwicklung", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Programmiert und entwickelt Software, Apps und IT-Systeme.", bibb: "Fachinformatiker" },
+  { name: "Fachinformatiker/in – Systemintegration", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Installiert, konfiguriert und wartet IT-Systeme und Netzwerke.", bibb: "Fachinformatiker" },
+  { name: "Fachinformatiker/in – Daten- und Prozessanalyse", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Analysiert Daten und optimiert Prozesse mit IT-Tools.", bibb: "Fachinformatiker" },
+  { name: "Fachinformatiker/in – Digitale Vernetzung", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Plant und betreibt vernetzte IT-Systeme und IoT-Infrastrukturen.", bibb: "Fachinformatiker" },
+  { name: "Fachangestellte/r für Arbeitsmarktdienstleistungen", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Berät Arbeitssuchende und Betriebe bei der Agentur für Arbeit.", bibb: "Fachangestellte" },
+  { name: "Fachangestellte/r für Bäderbetriebe", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Überwacht Badegäste, unterrichtet Schwimmen und wartet Badeanlagen.", bibb: "Fachangestellte" },
+  { name: "Fachangestellte/r für Medien- und Informationsdienste", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "Johann-Friedrich-von-Cotta-Schule Stuttgart", desc: "Erschließt, verwaltet und vermittelt Informationen in Bibliotheken und Archiven.", bibb: "Fachangestellte" },
+  { name: "Fachangestellte/r für Markt- und Sozialforschung", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Wilhelm-Maybach-Schule Stuttgart", desc: "Führt Befragungen und Marktanalysen durch und wertet Daten aus.", bibb: "Fachangestellte" },
+  { name: "Fahrzeuginterieur-Mechaniker/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Kerschensteinerschule Stuttgart", desc: "Fertigt und montiert Fahrzeuginnenausstattungen aus Leder und Textil.", bibb: "Fahrzeuginterieur-Mechaniker" },
+  { name: "Fahrzeuglackierer/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Wilhelm-Maybach-Schule Stuttgart", desc: "Lackiert Fahrzeuge, bereitet Oberflächen vor und repariert Lackschäden.", bibb: "Fahrzeuglackierer" },
+  { name: "Feinwerkmechaniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart; Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Stellt präzise mechanische Bauteile und Geräte her.", bibb: "Feinwerkmechaniker" },
+  { name: "Fertigungsmechaniker/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Einstiegsberuf: fertigt Metallteile nach Zeichnung in der Serienproduktion.", bibb: "Fertigungsmechaniker" },
+  { name: "Fleischer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Verarbeitet Fleisch, stellt Wurstwaren her und bedient Kunden.", bibb: "Fleischer" },
+  { name: "Fliesen-, Platten- und Mosaikleger/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Verlegt Fliesen, Platten und Mosaike in Innenräumen und außen.", bibb: "Fliesen-,+Platten-+und+Mosaikleger" },
+  { name: "Florist/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Bindet Sträuße, gestaltet Dekorationen und berät Kunden im Blumenfachhandel.", bibb: "Florist" },
+  { name: "Forstwirt/in", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Forstliches Bildungszentrum Baden-Württemberg Königsbronn", desc: "Pflegt und bewirtschaftet Wälder, fällt Bäume und forstet wieder auf.", bibb: "Forstwirt" },
+  { name: "Friseur/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart; Gewerbliche Schule Bad Cannstatt", desc: "Schneidet, färbt und stylt Haare und berät Kunden zu Pflegeprodukten.", bibb: "Friseur" },
+  { name: "Gärtner/in – Garten- und Landschaftsbau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Gestaltet und pflegt Gärten, Parks und Außenanlagen.", bibb: "Gärtner" },
+  { name: "Gärtner/in – Zierpflanzenbau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Zieht Zierpflanzen in Gärtnereien und Gewächshäusern.", bibb: "Gärtner" },
+  { name: "Gärtner/in – Gemüsebau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart; Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Anbaut und erntet Gemüse im Freiland und unter Glas.", bibb: "Gärtner" },
+  { name: "Gärtner/in – Obstbau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Kultiviert Obstanlagen und erntet Früchte für den Verkauf.", bibb: "Gärtner" },
+  { name: "Gärtner/in – Staudengärtnerei", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Zieht und pflegt Stauden für Gärten und Freilandanlagen.", bibb: "Gärtner" },
+  { name: "Gärtner/in – Baumschule", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Zieht Bäume und Sträucher für Garten- und Landschaftsbau.", bibb: "Gärtner" },
+  { name: "Gebäudereiniger/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule Stuttgart (über Meldestelle)", desc: "Reinigt Gebäude, Fassaden und Industrieanlagen professionell.", bibb: "Gebäudereiniger" },
+  { name: "Geomatiker/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Erhebt, bearbeitet und visualisiert Geoinformationen für Karten und Planung.", bibb: "Geomatiker" },
+  { name: "Gerüstbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Errichtet Gerüste für Bau- und Instandhaltungsarbeiten.", bibb: "Gerüstbauer" },
+  { name: "Gestalter/in für immersive Medien", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "IT-Schule Stuttgart; Johannes-Gutenberg-Schule Stuttgart", desc: "Entwickelt Virtual-Reality-, Augmented-Reality- und interaktive Medienerlebnisse.", bibb: "Gestalter" },
+  { name: "Gestalter/in für visuelles Marketing", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Gestaltet Schaufenster, Verkaufsräume und Werbeauftritte im Einzelhandel.", bibb: "Gestalter" },
+  { name: "Gleisbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Baut und wartet Schienenwege für Eisenbahn und Straßenbahn.", bibb: "Gleisbauer" },
+  { name: "Gold- und Silberschmied/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Goldschmiedeschule Schwäbisch Gmünd", desc: "Fertigt und repariert Schmuck aus Edelmetallen und Edelsteinen.", bibb: "Gold-+und+Silberschmied" },
+  { name: "Graveur/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Goldschmiedeschule Schwäbisch Gmünd", desc: "Graviert Buchstaben, Ornamente und Muster in Metall, Holz oder Stein.", bibb: "Graveur" },
+  { name: "Hauswirtschafter/in", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Übernimmt hauswirtschaftliche Versorgung in Pflegeheimen und Betrieben.", bibb: "Hauswirtschafter" },
+  { name: "Holzmechaniker/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule Holztechnik Stuttgart", desc: "Fertigt Möbel, Holzteile und Innenausbaukomponenten in der Holzindustrie.", bibb: "Holzmechaniker" },
+  { name: "Hotelfachmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Empfängt Gäste, betreut sie am Empfang und in allen Hotelbereichen.", bibb: "Hotelfachmann" },
+  { name: "Hörakustiker/in", dauer: "3 J.", abschluss: "MR", kammer: "HWK", feld: "Gesundheit & Pflege", schule: "BSZ Leonberg; Hörgeräteakustikermeisterschule Lübeck", desc: "Berät Kunden zu Hörgeräten, führt Hörtests durch und passt Hörgeräte an.", bibb: "Hörakustiker" },
+  { name: "Immobilienkaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Vermittelt, verwaltet und vermarktet Wohn- und Gewerbeimmobilien.", bibb: "Immobilienkaufmann" },
+  { name: "Industrieelektriker/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Einstiegsberuf: montiert und prüft elektrische Betriebsmittel in der Industrie.", bibb: "Industrieelektriker" },
+  { name: "Industriekaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart; Louis-Leitz-Schule Stuttgart", desc: "Übernimmt kaufmännische Aufgaben in Industriebetrieben.", bibb: "Industriekaufmann" },
+  { name: "Industriemechaniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen; Max-Eyth-Schule Stuttgart", desc: "Montiert und wartet Maschinen und Anlagen in der Industrie.", bibb: "Industriemechaniker" },
+  { name: "Informationselektroniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Installiert und wartet Informations- und Kommunikationstechnikanlagen.", bibb: "Informationselektroniker" },
+  { name: "IT-System-Elektroniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Installiert und wartet elektronische IT-Geräte, Netzwerke und TK-Systeme.", bibb: "IT-System-Elektroniker" },
+  { name: "IT-System-Kaufleute", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Berät Kunden zu IT-Produkten und betreut IT-Projekte kaufmännisch.", bibb: "IT-System-Kaufleute" },
+  { name: "Justizfachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Bearbeitet Verfahren bei Gerichten und Staatsanwaltschaften.", bibb: "Justizfachangestellte" },
+  { name: "Kanalbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Baut und saniert Leitungen für Wasser, Abwasser und Energie im Tiefbau.", bibb: "Kanalbauer" },
+  { name: "Karosserie- und Fahrzeugbaumechaniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Wilhelm-Maybach-Schule Stuttgart", desc: "Repariert und restauriert Fahrzeugkarosserien.", bibb: "Karosserie-+und+Fahrzeugbaumechaniker" },
+  { name: "Kaufleute für Büromanagement", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart; Louis-Leitz-Schule Stuttgart", desc: "Organisiert Büroabläufe, koordiniert Termine und kommuniziert mit Kunden.", bibb: "Kaufleute+für+Büromanagement" },
+  { name: "Kaufleute für Dialogmarketing", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Betreut Kunden telefonisch in Call-Centern und Serviceabteilungen.", bibb: "Kaufleute+für+Dialogmarketing" },
+  { name: "Kaufleute für Digitalisierungsmanagement", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Begleitet Digitalisierungsprojekte in Unternehmen kaufmännisch.", bibb: "Kaufleute+für+Digitalisierungsmanagement" },
+  { name: "Kaufleute für E-Commerce", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "Kaufmännische Schule 1 Stuttgart; Louis-Leitz-Schule Stuttgart", desc: "Verwaltet Online-Shops und koordiniert digitale Marketingmaßnahmen.", bibb: "Kaufleute+für+E-Commerce" },
+  { name: "Kaufleute für Groß- und Außenhandelsmanagement", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Kauft und verkauft Waren in großen Mengen und koordiniert Import/Export.", bibb: "Kaufleute+für+Groß-+und+Außenhandelsmanagement" },
+  { name: "Kaufleute im Gesundheitswesen", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Gesundheit & Pflege", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Übernimmt administrative Aufgaben in Krankenhäusern und Kassen.", bibb: "Kaufleute+im+Gesundheitswesen" },
+  { name: "Kaufleute für IT-System-Management", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Plant und verwaltet IT-Systeme aus kaufmännischer Perspektive.", bibb: "Kaufleute+für+IT-System-Management" },
+  { name: "Kaufleute für Kurier-, Express- und Postdienstleistungen", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Organisiert die Zustellung von Paketen und Expresssendungen.", bibb: "Kaufleute+für+Kurier-,+Express-+und+Postdienstleistungen" },
+  { name: "Kaufleute für Marketingkommunikation", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Louis-Leitz-Schule Stuttgart; Kaufmännische Schule 1 Stuttgart", desc: "Plant und umsetzt Marketingkampagnen, Werbemaßnahmen und PR.", bibb: "Kaufleute+für+Marketingkommunikation" },
+  { name: "Kaufleute für Spedition und Logistikdienstleistung", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Organisiert den Transport von Waren national und international.", bibb: "Kaufleute+für+Spedition+und+Logistikdienstleistung" },
+  { name: "Kaufleute für Tourismus und Freizeit", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Organisiert Freizeitangebote, Reisen und touristische Dienstleistungen.", bibb: "Kaufleute+für+Tourismus+und+Freizeit" },
+  { name: "Kaufleute für Verkehrsservice", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Öffentlicher Dienst", schule: "Louis-Leitz-Schule Stuttgart", desc: "Informiert Fahrgäste, verkauft Tickets und übernimmt Aufgaben im ÖPNV.", bibb: "Kaufleute+für+Verkehrsservice" },
+  { name: "Kaufleute für Versicherungen und Finanzen", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Berät zu Versicherungen und Finanzprodukten, bearbeitet Schäden.", bibb: "Kaufleute+für+Versicherungen+und+Finanzen" },
+  { name: "Kaufleute im Einzelhandel", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Handel & Verkauf", schule: "Kaufmännische Schule 1 Stuttgart; KSZ Böblingen", desc: "Berät Kunden und verkauft Waren in Einzelhandelsgeschäften.", bibb: "Kaufleute+im+Einzelhandel" },
+  { name: "KFZ-Mechatroniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Wilhelm-Maybach-Schule Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Wartet, repariert und prüft Kraftfahrzeuge aller Antriebsarten.", bibb: "KFZ-Mechatroniker" },
+  { name: "Klempner/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Robert-Mayer-Schule Stuttgart", desc: "Verarbeitet Bleche und Rohre für Dächer, Fassaden und Haustechnik.", bibb: "Klempner" },
+  { name: "Koch/Köchin", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Bereitet Speisen und Menüs in Restaurants, Hotels und Kantinen zu.", bibb: "Koch" },
+  { name: "Konditor/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Stellt Torten, Pralinen, Marzipan und Feingebäck her.", bibb: "Konditor" },
+  { name: "Konstruktionsmechaniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart", desc: "Fertigt und montiert Stahl- und Metallkonstruktionen.", bibb: "Konstruktionsmechaniker" },
+  { name: "Kosmetiker/in", dauer: "3 J.", abschluss: "MR", kammer: "HWK", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Führt Schönheitsbehandlungen durch: Gesichtsbehandlung, Maniküre, Make-up.", bibb: "Kosmetiker" },
+  { name: "Kraftfahrzeugmechatroniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Wilhelm-Maybach-Schule Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Wartet, repariert und prüft Kraftfahrzeuge aller Antriebsarten.", bibb: "Kraftfahrzeugmechatroniker" },
+  { name: "Lacklaborant/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Entwickelt und prüft Lacke, Farben und Beschichtungsstoffe im Labor.", bibb: "Lacklaborant" },
+  { name: "Land- und Baumaschinenmechatroniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Gewerbliche Schule Nürtingen; Grafenbergschule Schorndorf", desc: "Wartet und repariert Traktoren, Bagger und Baumaschinen.", bibb: "Land-+und+Baumaschinenmechatroniker" },
+  { name: "Landwirt/in", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Bewirtschaftet landwirtschaftliche Betriebe: Pflanzenbau und Tierhaltung.", bibb: "Landwirt" },
+  { name: "Luftverkehrskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Abfertigt Passagiere und Fracht am Flughafen und koordiniert Flugreisen.", bibb: "Luftverkehrskaufmann" },
+  { name: "Maler/in und Lackierer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Streicht, lackiert und beschichtet Wände, Fassaden und Oberflächen.", bibb: "Maler" },
+  { name: "Maurer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Errichtet Mauerwerk, Wände und Fundamente aus verschiedenen Baustoffen.", bibb: "Maurer" },
+  { name: "Mechatroniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Robert-Bosch-Schule Stuttgart; Werner-Siemens-Schule Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Verbindet Mechanik, Elektronik und Informatik in komplexen Systemen.", bibb: "Mechatroniker" },
+  { name: "Mechatroniker/in – Kältetechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Elektro & Technik", schule: "BSZ Leonberg", desc: "Installiert und wartet Kälte- und Klimaanlagen.", bibb: "Mechatroniker" },
+  { name: "Mediengestalter/in – Bild und Ton", dauer: "3 J.", abschluss: "FHR", kammer: "IHK", feld: "Medien & Design", schule: "IT-Schule Stuttgart", desc: "Produziert Film- und Tonaufnahmen für TV, Internet und Veranstaltungen.", bibb: "Mediengestalter" },
+  { name: "Mediengestalter/in – Digital und Print", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "Johannes-Gutenberg-Schule Stuttgart; IT-Schule Stuttgart", desc: "Gestaltet digitale und gedruckte Medien für Web, Apps und Print.", bibb: "Mediengestalter" },
+  { name: "Medizinische/r Fachangestellte/r", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Unterstützt Ärzte in der Praxis: Termine, Blutabnahme, Patientenbetreuung.", bibb: "Medizinische" },
+  { name: "Metallbauer/in – Konstruktionstechnik", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart; Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Fertigt und montiert Metallkonstruktionen wie Türen, Tore und Geländer.", bibb: "Metallbauer" },
+  { name: "Metallbauer/in – Metallgestaltung", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart", desc: "Fertigt dekorative Metallgegenstände wie Zäune, Gitter und Skulpturen.", bibb: "Metallbauer" },
+  { name: "Notarfachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Fertigt notarielle Urkunden und Verträge vor und betreut Mandanten.", bibb: "Notarfachangestellte" },
+  { name: "Notfallsanitäter/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "DRK-Bildungszentrum Stuttgart; Malteser Hilfsdienst Stuttgart", desc: "Versorgt Verletzte und Erkrankte im Rettungsdienst.", bibb: "Notfallsanitäter" },
+  { name: "Operationstechnische/r Assistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Robert-Bosch-Krankenhaus Stuttgart; Stiftungskrankenhaus Nördlingen", desc: "Assistiert bei chirurgischen Eingriffen und bereitet den OP vor.", bibb: "Operationstechnische" },
+  { name: "Orthopädietechnik-Mechaniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Gesundheit & Pflege", schule: "Kerschensteinerschule Stuttgart", desc: "Fertigt und passt orthopädische Hilfsmittel wie Prothesen an.", bibb: "Orthopädietechnik-Mechaniker" },
+  { name: "Patentanwaltsfachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Unterstützt Patentanwälte bei Anmeldevorgängen und Recherchen.", bibb: "Patentanwaltsfachangestellte" },
+  { name: "Personaldienstleistungskaufmann/-frau", dauer: "3 J.", abschluss: "FHR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Louis-Leitz-Schule Stuttgart", desc: "Vermittelt und betreut Personal für Zeitarbeit und Personaldienstleistungen.", bibb: "Personaldienstleistungskaufmann" },
+  { name: "Pflegefachmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Krankenpflegeschulen Stuttgart (Robert-Bosch-Krankenhaus, Marienhospital, Klinikum Stuttgart)", desc: "Pflegt und betreut Menschen aller Altersgruppen in Krankenhäusern und Pflegeheimen.", bibb: "Pflegefachmann" },
+  { name: "Pharmakant/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Stellt pharmazeutische Produkte wie Tabletten und Salben her.", bibb: "Pharmakant" },
+  { name: "Pharmazeutisch-kaufmänn. Angestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Unterstützt in Apotheken bei Beratung, Verkauf und Warenwirtschaft.", bibb: "Pharmazeutisch-kaufmänn.+Angestellte" },
+  { name: "Physiklaborant/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Führt physikalische Messungen und Versuche im Labor durch.", bibb: "Physiklaborant" },
+  { name: "Podologe/in", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Berufsschule für Gesundheitsberufe Stuttgart", desc: "Behandelt Erkrankungen und Schäden an Füßen medizinisch.", bibb: "Podologe" },
+  { name: "Produktionstechnologe/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Technische Schule Aalen", desc: "Plant und optimiert industrielle Fertigungsprozesse.", bibb: "Produktionstechnologe" },
+  { name: "Raumausstatter/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Gestaltet Innenräume: verlegt Bodenbeläge, näht Vorhänge und polstert Möbel.", bibb: "Raumausstatter" },
+  { name: "Rechtsanwaltsfachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Übernimmt Sekretariats- und Verwaltungsaufgaben in Rechtsanwaltskanzleien.", bibb: "Rechtsanwaltsfachangestellte" },
+  { name: "Reiseverkehrskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Plant und verkauft Reisen, Pauschalangebote und Unterkunft im Reisebüro.", bibb: "Reiseverkehrskaufmann" },
+  { name: "Restaurantfachmann/-frau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Betreut Gäste im Restaurant, nimmt Bestellungen auf und serviert Speisen.", bibb: "Restaurantfachmann" },
+  { name: "Rollladen- und Sonnenschutzmechatroniker/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule Ehingen", desc: "Montiert und wartet Rollladen, Jalousien und Sonnenschutzanlagen.", bibb: "Rollladen-+und+Sonnenschutzmechatroniker" },
+  { name: "Sattler/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Verarbeitet Leder zu Polstermöbeln, Sattlerwaren und Kfz-Innenausstattungen.", bibb: "Sattler" },
+  { name: "Schifffahrtskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "Louis-Leitz-Schule Stuttgart", desc: "Organisiert Schiffstransporte und Hafenumschlag für Güter.", bibb: "Schifffahrtskaufmann" },
+  { name: "Schornsteinfeger/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Bau & Handwerk", schule: "Ferdinand-von-Steinbeis-Schule Ulm", desc: "Reinigt und prüft Schornsteine, Heizungsanlagen und Feuerstätten.", bibb: "Schornsteinfeger" },
+  { name: "Schreiner/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule Holztechnik Stuttgart", desc: "Fertigt und montiert Holzmöbel, Fenster und Innenausbauteile.", bibb: "Schreiner" },
+  { name: "Seiler/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Staatl. BS Sondershausen Thüringen (bundesweit)", desc: "Stellt Seile, Taue und Netze aus verschiedenen Materialien her.", bibb: "Seiler" },
+  { name: "Servicekraft für Schutz und Sicherheit", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Öffentlicher Dienst", schule: "Max-Eyth-Schule Stuttgart", desc: "Schützt Gebäude und Personen – Einstiegsqualifikation in die Sicherheitsbranche.", bibb: "Servicekraft+für+Schutz+und+Sicherheit" },
+  { name: "Sozialversicherungsfachangestellte/r – Krankenversicherung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Berät Versicherte bei Krankenkassen zu Leistungen und Beiträgen.", bibb: "Sozialversicherungsfachangestellte" },
+  { name: "Sozialversicherungsfachangestellte/r – Rentenversicherung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Bearbeitet Rentenanträge und berät Versicherte bei der Rentenversicherung.", bibb: "Sozialversicherungsfachangestellte" },
+  { name: "Sportfachmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Handel & Verkauf", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Berät Kunden zu Sportartikeln und koordiniert Sportveranstaltungen.", bibb: "Sportfachmann" },
+  { name: "Steinmetz/in und Steinbildhauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Friedrich-Weinbrenner-Gewerbeschule Freiburg", desc: "Bearbeitet Naturstein für Bau, Denkmäler und Kunst.", bibb: "Steinmetz" },
+  { name: "Steuerfachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Erstellt Steuererklärungen, Jahresabschlüsse und Buchführungen in Kanzleien.", bibb: "Steuerfachangestellte" },
+  { name: "Straßenbauer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart; Grafenbergschule Schorndorf", desc: "Baut und saniert Straßen, Wege, Plätze und Parkflächen.", bibb: "Straßenbauer" },
+  { name: "Stuckateur/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart; BSZ Leonberg", desc: "Verputzt Wände, stellt Stuckelemente her und isoliert Fassaden.", bibb: "Stuckateur" },
+  { name: "Systemgastronomiefachmann/-frau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Arbeitet in Systemgastronomie-Betrieben wie Fast-Food-Ketten.", bibb: "Systemgastronomiefachmann" },
+  { name: "Technische/r Modellbauer/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Wilhelm-Maybach-Schule Stuttgart", desc: "Baut Modelle und Prototypen für Fahrzeuge und technische Produkte.", bibb: "Technische" },
+  { name: "Technische/r Produktdesigner/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "Gewerbliche Schule Holztechnik Stuttgart; Max-Eyth-Schule Stuttgart", desc: "Entwirft und konstruiert technische Produkte mit CAD-Software.", bibb: "Technische" },
+  { name: "Technische/r Systemplaner/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Robert-Mayer-Schule Stuttgart", desc: "Erstellt technische Pläne und CAD-Zeichnungen für Elektrotechnik.", bibb: "Technische" },
+  { name: "Textilreiniger/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Reinigt und pflegt Kleidungsstücke und Heimtextilien in Reinigungen.", bibb: "Textilreiniger" },
+  { name: "Tiermedizinische/r Fachangestellte/r", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Unterstützt Tierärzte bei Untersuchungen und Behandlungen.", bibb: "Tiermedizinische" },
+  { name: "Tierpfleger/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Pflegt und betreut Tiere in Zoos, Tierheimen und Forschungseinrichtungen.", bibb: "Tierpfleger" },
+  { name: "Tierwirt/in", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Hält und betreut Nutztiere in landwirtschaftlichen Betrieben.", bibb: "Tierwirt" },
+  { name: "Tischler/in", dauer: "3 J.", abschluss: "MR", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule Holztechnik Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Fertigt Möbel, Türen und Innenausbauten aus Holz und Holzwerkstoffen.", bibb: "Tischler" },
+  { name: "Tourismuskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Organisiert Geschäftsreisen, Events und Tourismusdienstleistungen.", bibb: "Tourismuskaufmann" },
+  { name: "Uhrmacher/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Elektro & Technik", schule: "Gewerbliche Schule für Uhren und Schmuck Schwäbisch Gmünd", desc: "Repariert und wartet mechanische und elektronische Uhren.", bibb: "Uhrmacher" },
+  { name: "Umwelttechnologe/in – Abwasserbewirtschaftung", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Überwacht und betreibt Kläranlagen und Abwassersysteme.", bibb: "Umwelttechnologe" },
+  { name: "Umwelttechnologe/in – Rohrleitungsnetze", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Wartet Wasser-, Gas- und Wärmenetze.", bibb: "Umwelttechnologe" },
+  { name: "Umwelttechnologe/in – Wasserversorgung", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Betreibt Wasserwerke und Verteilungsnetze für Trinkwasserversorgung.", bibb: "Umwelttechnologe" },
+  { name: "Umwelttechnologe/in – Kreislauf- und Abfallwirtschaft", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Sammelt und verwertet Abfälle und Wertstoffe, betreibt Recyclinganlagen.", bibb: "Umwelttechnologe" },
+  { name: "Veranstaltungskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Robert-Schuhmann-Schule Baden-Baden; Staatl. BS Günzburg", desc: "Plant und organisiert Veranstaltungen wie Messen und Konzerte.", bibb: "Veranstaltungskaufmann" },
+  { name: "Verfahrensmechaniker/in – Beschichtungstechnik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Beschichtet Oberflächen durch Galvanik, Lackierung oder Pulverbeschichtung.", bibb: "Verfahrensmechaniker" },
+  { name: "Verfahrensmechaniker/in – Kunststoff- und Kautschuktechnik", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Stellt Kunststoffbauteile durch Spritzguss und andere Verfahren her.", bibb: "Verfahrensmechaniker" },
+  { name: "Verkäufer/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Handel & Verkauf", schule: "Kaufmännische Schule 1 Stuttgart; KSZ Böblingen; Kolping Berufliche Schule Sindelfingen", desc: "Berät Kunden und kassiert im Einzelhandel – Einstiegsqualifikation.", bibb: "Verkäufer" },
+  { name: "Vermessungstechniker/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Misst Gelände, Gebäude und Grundstücke für Bau und Kartografie.", bibb: "Vermessungstechniker" },
+  { name: "Verwaltungsfachangestellte/r – Kommunalverwaltung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Arbeitet in Ämtern und Behörden, bearbeitet Bürgeranliegen.", bibb: "Verwaltungsfachangestellte" },
+  { name: "Verwaltungsfachangestellte/r – Bundesverwaltung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Übernimmt Verwaltungsaufgaben in Bundesbehörden.", bibb: "Verwaltungsfachangestellte" },
+  { name: "Werkfeuerwehrmann/-frau", dauer: "2 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Landesfeuerwehrschule Baden-Württemberg Bruchsal", desc: "Löscht Brände und rettet Personen in Industrie- und Gewerbebetrieben.", bibb: "Werkfeuerwehrmann" },
+  { name: "Werkzeugmechaniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen; Max-Eyth-Schule Kirchheim", desc: "Fertigt Präzisionswerkzeuge und Formen für die Produktion.", bibb: "Werkzeugmechaniker" },
+  { name: "Winzer/in", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Staatliche Lehr- und Versuchsanstalt Weinsberg", desc: "Anbaut Reben, erntet Trauben und produziert Wein.", bibb: "Winzer" },
+  { name: "Zahntechniker/in", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Stellt Zahnersatz, Kronen und Brücken im zahntechnischen Labor her.", bibb: "Zahntechniker" },
+  { name: "Zahnmedizinische/r Fachangestellte/r", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart; Gottlieb-Daimler-Schule 2 Sindelfingen", desc: "Assistiert beim Zahnarzt, empfängt Patienten und übernimmt Verwaltungsaufgaben.", bibb: "Zahnmedizinische" },
+  { name: "Zerspanungsmechaniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Max-Eyth-Schule Stuttgart", desc: "Fräst, dreht und bohrt Metallteile auf CNC-Maschinen.", bibb: "Zerspanungsmechaniker" },
+  { name: "Zimmerer/Zimmerin", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Arbeitet mit Holz: baut Dachstühle, Treppen und Holzrahmenkonstruktionen.", bibb: "Zimmerer" },
+  { name: "Zweiradmechatroniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Gewerbliche Schule Tübingen; Gewerbeschule Breisach", desc: "Repariert und wartet Fahrräder, Motorräder und E-Bikes.", bibb: "Zweiradmechatroniker" },
+  { name: "Fachkraft für Agrarservice", dauer: "3 J.", abschluss: "HSA", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Bedient landwirtschaftliche Maschinen für Lohnunternehmen.", bibb: "Fachkraft+für+Agrarservice" },
+  { name: "Fachkraft für Beauty und Wellness", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Führt Wellness- und Schönheitsbehandlungen in Spas und Studios durch.", bibb: "Fachkraft+für+Beauty+und+Wellness" },
+  { name: "Fachkraft für Fruchtsafttechnik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Produziert Fruchtsäfte und andere Getränke in der Lebensmittelindustrie.", bibb: "Fachkraft+für+Fruchtsafttechnik" },
+  { name: "Fachkraft für Hafenlogistik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Berufsschule Hamburg (bundesweit)", desc: "Koordiniert den Güterumschlag in Häfen und Terminals.", bibb: "Fachkraft+für+Hafenlogistik" },
+  { name: "Fachkraft für Holz- und Bautenschutzarbeiten", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Schützt Holz- und Baukonstruktionen vor Schädlingen und Feuchtigkeit.", bibb: "Fachkraft+für+Holz-+und+Bautenschutzarbeiten" },
+  { name: "Fachkraft für Hygieneüberwachung", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gesundheit & Pflege", schule: "Alexander-Fleming-Schule Stuttgart", desc: "Kontrolliert Hygienemaßnahmen in Lebensmittel- und Gesundheitsbetrieben.", bibb: "Fachkraft+für+Hygieneüberwachung" },
+  { name: "Fachangestellte/r für Arbeitsmarktdienstleistungen", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Berät und vermittelt Arbeitsuchende bei der Agentur für Arbeit.", bibb: "Fachangestellte" },
+  { name: "Disponent/in – Integrierte Leitstelle", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Feuerwehrschule Stuttgart", desc: "Koordiniert Einsätze von Feuerwehr, Rettungsdienst und Polizei in Leitstellen.", bibb: "Disponent" },
+  { name: "Erzieher/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Fachschule für Sozialpädagogik Stuttgart; Hedwig-Dohm-Schule Stuttgart", desc: "Betreut, fördert und bildet Kinder und Jugendliche in pädagogischen Einrichtungen.", bibb: "Erzieher" },
+  { name: "Sozialassistent/in", dauer: "2 J.", abschluss: "HSA", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Unterstützt in sozialen Einrichtungen: Pflegeheime, Kitas, Behinderteneinrichtungen.", bibb: "Sozialassistent" },
+  { name: "Fachkraft Frühpädagogik", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Hedwig-Dohm-Schule Stuttgart; Steinbeis-Schule Stuttgart", desc: "Betreut und fördert Kleinkinder in Krippen und Kitas.", bibb: "Fachkraft+Frühpädagogik" },
+  { name: "Ergotherapeut/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Ergotherapie Stuttgart; Hochschule Esslingen", desc: "Unterstützt Menschen mit körperlichen oder psychischen Einschränkungen durch gezielte Therapie.", bibb: "Ergotherapeut" },
+  { name: "Logopäde/Logopädin", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Logopädie Stuttgart; Diakonieklinikum Stuttgart", desc: "Diagnostiziert und therapiert Sprach-, Sprech- und Stimmstörungen.", bibb: "Logopäde" },
+  { name: "Physiotherapeut/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Schule für Physiotherapie Stuttgart; Klinikum Stuttgart", desc: "Behandelt Bewegungs- und Funktionseinschränkungen mit physikalischen Methoden.", bibb: "Physiotherapeut" },
+  { name: "Heilerziehungspfleger/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Fachschule für Heilerziehungspflege Stuttgart; Evangelisches Bildungszentrum Stuttgart", desc: "Unterstützt Menschen mit Behinderungen bei der Alltagsbewältigung.", bibb: "Heilerziehungspfleger" },
+  { name: "Fachkraft für Restaurant und Veranstaltungsgastronomie", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Betreut Gäste bei Veranstaltungen und im Restaurant.", bibb: "Fachkraft+für+Restaurant+und+Veranstaltungsgastronomie" },
+  { name: "Fachkraft für Systemgastronomie", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Arbeitet in systemgastronomischen Betrieben und Großküchen.", bibb: "Fachkraft+für+Systemgastronomie" },
+  { name: "Fachverkäufer/in im Lebensmittelhandwerk – Bäckerei", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Handel & Verkauf", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Berät Kunden und verkauft Backwaren im Bäckereifachgeschäft.", bibb: "Fachverkäufer" },
+  { name: "Fachverkäufer/in im Lebensmittelhandwerk – Fleischerei", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Handel & Verkauf", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Berät Kunden und verkauft Fleisch- und Wurstwaren im Fachgeschäft.", bibb: "Fachverkäufer" },
+  { name: "Medizinisch-technische/r Laboratoriumsassistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "MTA-Schule Stuttgart; Klinikum Stuttgart", desc: "Führt medizinische Laboranalysen für Diagnose und Behandlung durch.", bibb: "Medizinisch-technische" },
+  { name: "Medizinisch-technische/r Radiologieassistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "MTA-Schule Stuttgart; Klinikum Stuttgart", desc: "Erstellt Röntgenbilder, CT- und MRT-Aufnahmen für die Medizin.", bibb: "Medizinisch-technische" },
+  { name: "Hebamme/Entbindungspfleger", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Hebammenschule Stuttgart (Klinikum Stuttgart)", desc: "Begleitet Schwangere, unterstützt bei der Geburt und betreut Neugeborene.", bibb: "Hebamme" },
+  { name: "Kaufleute für audiovisuelle Medien", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "IT-Schule Stuttgart; Kaufmännische Schule 1 Stuttgart", desc: "Plant und vermarktet audiovisuelle Medienprodukte für TV, Online und Radio.", bibb: "Kaufleute+für+audiovisuelle+Medien" },
+  { name: "Verlagskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Johann-Friedrich-von-Cotta-Schule Stuttgart", desc: "Koordiniert Buchproduktionen in Verlagen: Lektorat, Vertrieb, Marketing.", bibb: "Verlagskaufmann" },
+  { name: "Musikinstrumentenbauer/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Berufsfachschule für Musikinstrumentenbau Mittenwald (Bayern, bundesweit)", desc: "Baut und repariert Musikinstrumente nach handwerklichen Methoden.", bibb: "Musikinstrumentenbauer" },
+  { name: "Buchdrucker/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Johannes-Gutenberg-Schule Stuttgart", desc: "Bedient Druckmaschinen für Bücher, Zeitschriften und Druckerzeugnisse.", bibb: "Buchdrucker" },
+  { name: "Technische/r Konfektionär/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Fertigt technische Textilprodukte wie Segel, Planen und Schutzkleidung.", bibb: "Technische" },
+  { name: "Textilgestalter/in im Handwerk", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Fertigt und veredelt Textilien durch Weben, Stricken und Drucken.", bibb: "Textilgestalter" },
+  { name: "Modeschneiderin/Modeschneider", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Entwirft und näht Modebekleidung nach Kundenwunsch oder Entwurfsvorlage.", bibb: "Modeschneiderin" },
+  { name: "Schuhmacher/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Kerschensteinerschule Stuttgart", desc: "Fertigt, repariert und passt Schuhe an.", bibb: "Schuhmacher" },
+  { name: "Keramiker/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Keramikfachschule Höhr-Grenzhausen (bundesweit)", desc: "Formt und brennt Keramikerzeugnisse für Haushalt, Technik und Kunst.", bibb: "Keramiker" },
+  { name: "Orgel- und Harmoniumbauer/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatl. Berufsschule für das Orgel- und Harmoniumbauhandwerk Ludwigsburg", desc: "Baut und repariert Orgeln und Harmonien für Kirchen und Konzerthäuser.", bibb: "Orgel-+und+Harmoniumbauer" },
+  { name: "Glaser/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Verarbeitet Glas für Fenster, Türen, Glasfassaden und Kunstobjekte.", bibb: "Glaser" },
+  { name: "Glasapparatebauer/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Fertigt Glasgeräte und Apparate für Labore und die Industrie.", bibb: "Glasapparatebauer" },
+  { name: "Vergolder/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Vergoldet Oberflächen von Möbeln, Rahmen und Kunstgegenständen.", bibb: "Vergolder" },
+  { name: "Weinküfer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Staatliche Lehr- und Versuchsanstalt Weinsberg", desc: "Bereitet Wein, Sekt und Obstmost auf und vermarktet sie.", bibb: "Weinküfer" },
+  { name: "Kürschner/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatl. BS München (bundesweit)", desc: "Verarbeitet Pelze zu Bekleidung und Accessoires.", bibb: "Kürschner" },
+  { name: "Fachkraft für Kreislauf- und Abfallwirtschaft", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Sammelt und verwertet Abfälle und Wertstoffe, betreibt Recyclinganlagen.", bibb: "Fachkraft+für+Kreislauf-+und+Abfallwirtschaft" },
+  { name: "Pflanzentechnologe/in", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Natur & Umwelt", schule: "Landwirtschaftliche Schule Hohenheim Stuttgart", desc: "Vermehrt und veredelt Pflanzen für Landwirtschaft und Gartenbau.", bibb: "Pflanzentechnologe" },
+  { name: "Stanz- und Umformmechaniker/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Stellt Metallteile durch Stanzen, Prägen und Umformen her.", bibb: "Stanz-+und+Umformmechaniker" },
+  { name: "Fachkraft für Metalltechnik", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Robert-Mayer-Schule Stuttgart", desc: "Einstiegsberuf: fertigt einfache Metallteile und bedient Maschinen.", bibb: "Fachkraft+für+Metalltechnik" },
+  { name: "Serienfertiger/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Fahrzeug & Metall", schule: "Gottlieb-Daimler-Schule 1 Sindelfingen", desc: "Einstieg in die Serienfertigung; Qualitätskontrolle und Maschinenbedienung.", bibb: "Serienfertiger" },
+  { name: "Bauten- und Objektbeschichter/in", dauer: "2 J.", abschluss: "HSA", kammer: "HWK", feld: "Bau & Handwerk", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Einstiegsberuf: streicht und beschichtet Wände, Fassaden und Bauteile.", bibb: "Bauten-+und+Objektbeschichter" },
+  { name: "Hochbaufacharbeiter/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Einstieg im Hochbau: legt Fundamente und mauert Wände.", bibb: "Hochbaufacharbeiter" },
+  { name: "Tiefbaufacharbeiter/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Einstieg im Tiefbau: legt Leitungen und Fundamente.", bibb: "Tiefbaufacharbeiter" },
+  { name: "Elektroniker/in für luftfahrttechnische Systeme", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Elektro & Technik", schule: "Göppingen (Lufthansa Technik Trainingspartner)", desc: "Wartet und repariert elektrische Systeme an Flugzeugen.", bibb: "Elektroniker" },
+  { name: "Fachkraft für Wasserversorgungstechnik", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Betreibt Wasserwerke und Verteilungsnetze für Trinkwasserversorgung.", bibb: "Fachkraft+für+Wasserversorgungstechnik" },
+  { name: "Investmentfondskaufmann/-frau", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Büro & Kaufmännisch", schule: "Kaufmännische Schule 1 Stuttgart", desc: "Verwaltet Investmentfonds und berät Anleger zu Wertpapieren.", bibb: "Investmentfondskaufmann" },
+  { name: "Fachkraft – Restaurant und Veranstaltungsgastronomie", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Betreut Gäste bei Veranstaltungen und im Restaurantbetrieb.", bibb: "Fachkraft" },
+  { name: "Pilot/in (Berufsflugzeugführer/in)", dauer: "1,5 J.", abschluss: "FHR", kammer: "Sonstige", feld: "Lager & Logistik", schule: "Luftfahrtschule Mannheim; DLR-Schule Braunschweig", desc: "Führt Passagier- und Frachtflugzeuge im Linien- und Charterverkehr.", bibb: "Pilot" },
+  { name: "Binnenschifffahrtskapitän/in", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Lager & Logistik", schule: "Berufsschule Duisburg (bundesweit)", desc: "Führt eigenverantwortlich Binnenschiffe als Kapitän.", bibb: "Binnenschifffahrtskapitän" },
+  { name: "Technische/r Zeichner/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart; Max-Eyth-Schule Stuttgart", desc: "Erstellt technische Zeichnungen und Dokumente für Maschinenbau und Technik.", bibb: "Technische" },
+  { name: "Fachkraft für Möbel-, Küchen- und Umzugsservice", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Lager & Logistik", schule: "Gewerbliche Schule Holztechnik Stuttgart", desc: "Liefert, montiert und transportiert Möbel und Küchen beim Kunden.", bibb: "Fachkraft+für+Möbel-,+Küchen-+und+Umzugsservice" },
+  { name: "Informationselektroniker/in – Bürosystemtechnik", dauer: "3,5 J.", abschluss: "MR", kammer: "HWK", feld: "Elektro & Technik", schule: "Werner-Siemens-Schule Stuttgart", desc: "Wartet Bürokommunikations- und Informationstechnikanlagen.", bibb: "Informationselektroniker" },
+  { name: "Zweiradmechatroniker/in – Motorradtechnik", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Gewerbliche Schule Tübingen", desc: "Repariert und wartet Motorräder und Roller.", bibb: "Zweiradmechatroniker" },
+  { name: "Wärme-, Kälte- und Schallschutzisolierer/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Dämmt Gebäude, Anlagen und Rohrleitungen gegen Wärme, Kälte und Schall.", bibb: "Wärme-,+Kälte-+und+Schallschutzisolierer" },
+  { name: "Kaufleute für Freizeit- und Sportanlagen", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Soziales & Erziehung", schule: "Kaufmännische Schule Stuttgart-Nord", desc: "Verwaltet und betreibt Freizeitanlagen wie Bäder, Sportarenen und Parks.", bibb: "Kaufleute+für+Freizeit-+und+Sportanlagen" },
+  { name: "Produktprüfer/in – Textil", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Prüft und kontrolliert Textilerzeugnisse auf Qualität und Normen.", bibb: "Produktprüfer" },
+  { name: "Bergbautechnologe/-technologin", dauer: "3,5 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Staatl. BS Lünen (bundesweit)", desc: "Gewinnt und fördert Bodenschätze in untertägigen und übertägigen Bergwerken.", bibb: "Bergbautechnologe" },
+  { name: "Berg- und Maschinenmann/-frau", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Staatl. BS Lünen (bundesweit)", desc: "Führt Bergbauarbeiten unter und über Tage durch.", bibb: "Berg-+und+Maschinenmann" }
+,
+{ name: "Atem-, Sprech- und Stimmlehrer/in", dauer: "3 J.", abschluss: "FHR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Berufsfachschule für Atem-, Sprech- und Stimmlehrer/in (verschiedene Standorte)", desc: "Therapiert und verbessert Stimme, Sprache und Sprechen bei Patienten.", bibb: "Atem-,+Sprech-+und+Stimmlehrer" },
+  { name: "Audio-Engineer", dauer: "3 J.", abschluss: "MR", kammer: "IHK", feld: "Medien & Design", schule: "IT-Schule Stuttgart; Robert-Schuhmann-Schule Baden-Baden", desc: "Nimmt Musik und Ton auf, mischt und bearbeitet sie für Produktionen.", bibb: "Audio-Engineer" },
+  { name: "Assistent/in – Ernährung und Versorgung", dauer: "2 J.", abschluss: "HSA", kammer: "Schulisch", feld: "Gastronomie & Lebensmittel", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Bereitet Speisen zu und übernimmt hauswirtschaftliche Versorgungsaufgaben.", bibb: "Assistent" },
+  { name: "Assistent/in – Gesundheits- und Sozialwesen", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Unterstützt in Gesundheits- und Sozialeinrichtungen bei Pflege und Betreuung.", bibb: "Assistent" },
+  { name: "Assistent/in – Gesundheitstourismus/-prophylaxe", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gesundheit & Pflege", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Berät zu Gesundheitsangeboten in Kurorten und Wellnesseinrichtungen.", bibb: "Assistent" },
+  { name: "Assistent/in – Hotelmanagement", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Gastronomie & Lebensmittel", schule: "Gewerbliche Schule im Hoppenlau Stuttgart", desc: "Unterstützt in Hotels bei Empfang, Service und Organisation.", bibb: "Assistent" },
+  { name: "Assistent/in – Informatik", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Unterstützt bei IT-Aufgaben: Programmierung, Netzwerke und Systembetreuung.", bibb: "Assistent" },
+  { name: "Assistent/in – Innenarchitektur", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Medien & Design", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Entwirft und plant Innenräume für Wohn- und Geschäftsgebäude.", bibb: "Assistent" },
+  { name: "Assistent/in – Maschinenbautechnik", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Elektro & Technik", schule: "Max-Eyth-Schule Stuttgart", desc: "Unterstützt im Maschinenbau bei Konstruktion und Fertigung.", bibb: "Assistent" },
+  { name: "Assistent/in – Medientechnik", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Medien & Design", schule: "Johannes-Gutenberg-Schule Stuttgart; IT-Schule Stuttgart", desc: "Betreut technische Medienanlagen für Film, TV und Veranstaltungen.", bibb: "Assistent" },
+  { name: "Assistent/in – Produktdesign", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Medien & Design", schule: "Gewerbliche Schule für Farbe und Gestaltung Stuttgart", desc: "Entwickelt Produktdesigns und erstellt Prototypen.", bibb: "Assistent" },
+  { name: "Assistent/in – Technische Kommunikation", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Büro & Kaufmännisch", schule: "Max-Eyth-Schule Stuttgart", desc: "Erstellt technische Dokumentationen, Handbücher und Anleitungen.", bibb: "Assistent" },
+  { name: "Bautechnische/r Konstrukteur/in", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Bau & Handwerk", schule: "Steinbeisschule Stuttgart", desc: "Erstellt Konstruktionspläne und Berechnungen für Bauwerke.", bibb: "Bautechnische" },
+  { name: "Beamter/Beamtin – Allgemeine Innere Verwaltung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Verwaltungsschule Baden-Württemberg Stuttgart", desc: "Bearbeitet Verwaltungsaufgaben in Landes- und Bundesbehörden.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Archivdienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Archivschule Marburg (bundesweit)", desc: "Erschließt, pflegt und verwahrt Archivgut in staatlichen Archiven.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Auswärtiger Dienst", dauer: "3 J.", abschluss: "FHR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Auswärtiges Amt Berlin (bundesweit)", desc: "Vertritt Deutschland im Ausland in Botschaften und Konsulaten.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Bundesbank", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Bundesbank-Filiale Stuttgart", desc: "Übernimmt Aufgaben im Bankwesen und in der Geldversorgung der Bundesbank.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Bundesnachrichtendienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "BND Pullach (bundesweit)", desc: "Arbeitet im Bereich Auslandsaufklärung und Nachrichtendienst.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Feuerwehrtechnischer Dienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Landesfeuerwehrschule Baden-Württemberg Bruchsal", desc: "Übernimmt technische Aufgaben bei der Berufs- oder Werkfeuerwehr.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Justizdienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Justizakademie Baden-Württemberg Rotenburg an der Fulda", desc: "Führt Verwaltungsaufgaben bei Gerichten und Staatsanwaltschaften durch.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Justizvollzugsdienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Justizvollzugsschule Baden-Württemberg Schwetzingen", desc: "Beaufsichtigt Gefangene und führt Vollzugsaufgaben in JVAs durch.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Steuerverwaltung", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Finanzakademie Baden-Württemberg Schwetzingen", desc: "Bearbeitet Steuerfälle und prüft Steuererklärungen in Finanzämtern.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Verfassungsschutz", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Verfassungsschutz Baden-Württemberg Stuttgart", desc: "Beobachtet und analysiert verfassungsfeindliche Bestrebungen.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Wetterdienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Deutscher Wetterdienst Offenbach (bundesweit)", desc: "Erstellt Wetterprognosen und beobachtet meteorologische Phänomene.", bibb: "Beamter" },
+  { name: "Beamter/Beamtin – Zolldienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "Hauptzollamt Stuttgart", desc: "Kontrolliert Ein- und Ausfuhren und erhebt Zölle und Steuern.", bibb: "Beamter" },
+  { name: "Bekleidungstechnische/r Assistent/in", dauer: "2 J.", abschluss: "MR", kammer: "Schulisch", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Unterstützt bei der Entwicklung und Produktion von Bekleidung.", bibb: "Bekleidungstechnische" },
+  { name: "Berufshubschrauberführer/in", dauer: "2 J.", abschluss: "FHR", kammer: "Sonstige", feld: "Lager & Logistik", schule: "Hubschrauberausbildungsschule (bundesweit)", desc: "Führt Hubschrauber für Transport, Rettung und Erkundung.", bibb: "Berufshubschrauberführer" },
+  { name: "Biologiemodellmacher/in", dauer: "3,5 J.", abschluss: "MR", kammer: "IHK", feld: "Natur & Umwelt", schule: "Staatl. BS Berlin (bundesweit)", desc: "Stellt anatomische Modelle und Präparate für Schulen und Forschung her.", bibb: "Biologiemodellmacher" },
+  { name: "Bogenmacher/in", dauer: "3,5 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatl. BS Mittenwald (bundesweit)", desc: "Stellt Bögen für Streichinstrumente aus Holz und Elfenbein her.", bibb: "Bogenmacher" },
+  { name: "Brenner/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Gastronomie & Lebensmittel", schule: "Ferdinand-von-Steinbeis-Schule Ulm", desc: "Brennt und destilliert Obstbrände, Schnäpse und hochwertige Spirituosen.", bibb: "Brenner" },
+  { name: "Bürsten- und Pinselmacher/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatl. BS Bechhofen Bayern (bundesweit)", desc: "Stellt Bürsten, Pinsel und Besen aus Natur- und Kunsthaar her.", bibb: "Bürsten-+und+Pinselmacher" },
+  { name: "Chemielaborjungwerker/in", dauer: "2 J.", abschluss: "HSA", kammer: "IHK", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Einstiegsberuf: führt einfache Laborarbeiten in der Chemieindustrie durch.", bibb: "Chemielaborjungwerker" },
+  { name: "Chemisch-technische/r Assistent/in", dauer: "3 J.", abschluss: "MR", kammer: "Schulisch", feld: "Natur & Umwelt", schule: "Kerschensteinerschule Stuttgart", desc: "Unterstützt bei chemischen Analysen und Versuchen in Laboren.", bibb: "Chemisch-technische" },
+  { name: "Edelsteinschleifer/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Medien & Design", schule: "Staatliche Zeichenakademie Hanau (bundesweit)", desc: "Schleift und poliert Edelsteine für Schmuck und dekorative Objekte.", bibb: "Edelsteinschleifer" },
+  { name: "Ensembleleiter/in", dauer: "3 J.", abschluss: "FHR", kammer: "Schulisch", feld: "Soziales & Erziehung", schule: "Musikhochschule Stuttgart", desc: "Leitet und dirigiert Musikensembles und Chöre.", bibb: "Ensembleleiter" },
+  { name: "Gerber/in", dauer: "3 J.", abschluss: "HSA", kammer: "HWK", feld: "Fahrzeug & Metall", schule: "Staatl. BS Reutlingen (bundesweit)", desc: "Bearbeitet Tierhäute zu Leder durch Gerbverfahren.", bibb: "Gerber" },
+  { name: "Glasmacher/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Staatl. BS Zwiesel Bayern (bundesweit)", desc: "Stellt Glaswaren durch Blasen, Pressen und Gießen her.", bibb: "Glasmacher" },
+  { name: "Kleidungstechniker/in", dauer: "3 J.", abschluss: "HSA", kammer: "IHK", feld: "Medien & Design", schule: "Hedwig-Dohm-Schule Stuttgart", desc: "Fertigt Bekleidung und Textilien in der Industrie.", bibb: "Kleidungstechniker" },
+  { name: "Mathematisch-technische/r Softwareentwickler/in", dauer: "4 J.", abschluss: "FHR", kammer: "IHK", feld: "Computer & IT", schule: "IT-Schule Stuttgart", desc: "Entwickelt mathematisch-technische Software für komplexe Berechnungen.", bibb: "Mathematisch-technische" },
+  { name: "Retter/in – Bergsport / Rettungsdienst", dauer: "3 J.", abschluss: "MR", kammer: "Sonstige", feld: "Öffentlicher Dienst", schule: "DRK-Bildungszentrum Stuttgart", desc: "Rettet und versorgt Verletzte im Rettungsdienst.", bibb: "Retter" },
+  { name: "Pilot/in – Berufsflugzeugführer/in", dauer: "1,5 J.", abschluss: "FHR", kammer: "Sonstige", feld: "Lager & Logistik", schule: "Luftfahrtschule Mannheim; DLR-Schule Braunschweig", desc: "Führt Passagier- und Frachtflugzeuge im Linien- und Charterverkehr.", bibb: "Pilot" }
+];
+
+// ============================================
+// BERUFSFELD-KONFIGURATION
+// ============================================
+const feldConfig = {
+  "Bau & Handwerk":          { icon: "🔨", color: "#795548" },
+  "Büro & Kaufmännisch":     { icon: "💼", color: "#1565C0" },
+  "Computer & IT":           { icon: "💻", color: "#283593" },
+  "Elektro & Technik":       { icon: "⚡", color: "#F57F17" },
+  "Fahrzeug & Metall":       { icon: "🔧", color: "#37474F" },
+  "Gastronomie & Lebensmittel": { icon: "🍽️", color: "#E65100" },
+  "Gesundheit & Pflege":     { icon: "🏥", color: "#1B5E20" },
+  "Handel & Verkauf":        { icon: "🛒", color: "#880E4F" },
+  "Lager & Logistik":        { icon: "📦", color: "#4A148C" },
+  "Medien & Design":         { icon: "🎨", color: "#AD1457" },
+  "Natur & Umwelt":          { icon: "🌿", color: "#2E7D32" },
+  "Öffentlicher Dienst":     { icon: "🏛️", color: "#0D47A1" },
+  "Soziales & Erziehung":    { icon: "🤝", color: "#6A1B9A" }
+};
+
+// ============================================
+// STATE
+// ============================================
+let azAbschluss = '';
+let azKammer = '';
+let azFeld = '';
+let azCurrentFeld = '';
+
+// ============================================
+// INIT STARTSCREEN
+// ============================================
+function azInitStartscreen() {
+  const grid = document.getElementById('az-feld-grid');
+  grid.innerHTML = '';
+  const felder = Object.keys(feldConfig);
+  felder.forEach(feld => {
+    const count = azData.filter(d => d.feld === feld).length;
+    const cfg = feldConfig[feld];
+    const btn = document.createElement('button');
+    btn.className = 'az-feld-btn';
+    btn.style.borderTopColor = cfg.color;
+    btn.style.borderTopWidth = '4px';
+    btn.innerHTML = `<span class="az-feld-icon">${cfg.icon}</span><span class="az-feld-name">${eld(feld)}</span><span class="az-feld-count">${count} Berufe</span>`;
+    btn.onclick = () => azShowFeld(feld);
+    grid.appendChild(btn);
+  });
+}
+
+function eld(str) { return str.replace(/&/g, '&amp;'); }
+
+// ============================================
+// NAVIGATION
+// ============================================
+function azShowFeld(feld) {
+  azCurrentFeld = feld;
+  azFeld = feld;
+  document.getElementById('az-startscreen').style.display = 'none';
+  document.getElementById('az-browse').classList.add('visible');
+  // Set feld chip active
+  azInitFeldChips();
+  document.querySelectorAll('#az-feld-chips .az-chip').forEach(c => {
+    if (c.dataset.val === feld) { c.classList.add('feld-active'); c.classList.remove('active'); }
+    else { c.classList.remove('feld-active', 'active'); if (c.dataset.val === '') c.classList.add('active'); }
+  });
+  azFilter();
+}
+
+function azShowAlle() {
+  azCurrentFeld = '';
+  azFeld = '';
+  document.getElementById('az-startscreen').style.display = 'none';
+  document.getElementById('az-browse').classList.add('visible');
+  azInitFeldChips();
+  azFilter();
+}
+
+function azGoBack() {
+  document.getElementById('az-browse').classList.remove('visible');
+  document.getElementById('az-startscreen').style.display = '';
+  azReset();
+}
+
+// ============================================
+// INIT FELD CHIPS IN SIDEBAR
+// ============================================
+function azInitFeldChips() {
+  const container = document.getElementById('az-feld-chips');
+  container.innerHTML = '<button class="az-chip active" data-val="" onclick="azSetFeld(this, \'\')">Alle Felder</button>';
+  Object.keys(feldConfig).forEach(feld => {
+    const btn = document.createElement('button');
+    btn.className = 'az-chip';
+    btn.dataset.val = feld;
+    btn.setAttribute('onclick', `azSetFeld(this, '${feld.replace(/'/g, "\\'")}')`);
+    btn.innerHTML = feldConfig[feld].icon + ' ' + eld(feld);
+    container.appendChild(btn);
+  });
+}
+
+// ============================================
+// FILTER ACTIONS
+// ============================================
+window.azSetAbschluss = function(btn, val) {
+  document.querySelectorAll('#az-abschluss-chips .az-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  azAbschluss = val;
+  azFilter();
+};
+window.azSetKammer = function(btn, val) {
+  document.querySelectorAll('#az-kammer-chips .az-chip').forEach(c => { c.classList.remove('active','kammer-active'); });
+  if (val) btn.classList.add('kammer-active'); else btn.classList.add('active');
+  azKammer = val;
+  azFilter();
+};
+window.azSetFeld = function(btn, val) {
+  document.querySelectorAll('#az-feld-chips .az-chip').forEach(c => { c.classList.remove('active','feld-active'); });
+  if (val) btn.classList.add('feld-active'); else btn.classList.add('active');
+  azFeld = val;
+  azFilter();
+};
+window.azReset = function() {
+  document.getElementById('az-search').value = '';
+  azAbschluss = ''; azKammer = ''; azFeld = azCurrentFeld;
+  document.querySelectorAll('#az-abschluss-chips .az-chip').forEach((c,i) => { c.classList.remove('active'); if(i===0) c.classList.add('active'); });
+  document.querySelectorAll('#az-kammer-chips .az-chip').forEach((c,i) => { c.classList.remove('active','kammer-active'); if(i===0) c.classList.add('active'); });
+  document.querySelectorAll('#az-feld-chips .az-chip').forEach(c => {
+    c.classList.remove('active','feld-active');
+    if (!azCurrentFeld && c.dataset.val === '') c.classList.add('active');
+    if (azCurrentFeld && c.dataset.val === azCurrentFeld) c.classList.add('feld-active');
+  });
+  azFilter();
+};
+window.azGoBack = azGoBack;
+window.azShowAlle = azShowAlle;
+
+// ============================================
+// FILTER & RENDER
+// ============================================
+window.azFilter = function() {
+  const query = document.getElementById('az-search').value.toLowerCase().trim();
+  const sort = document.getElementById('az-sort').value;
+  let results = azData.filter(d => {
+    if (query && !d.name.toLowerCase().includes(query) && !d.feld.toLowerCase().includes(query) && !(d.desc||'').toLowerCase().includes(query)) return false;
+    if (azAbschluss && d.abschluss !== azAbschluss) return false;
+    if (azKammer && d.kammer !== azKammer) return false;
+    if (azFeld && d.feld !== azFeld) return false;
+    return true;
+  });
+  if (sort === 'za') results.sort((a,b) => b.name.localeCompare(a.name, 'de'));
+  else if (sort === 'dauer') results.sort((a,b) => parseFloat(a.dauer) - parseFloat(b.dauer));
+  else results.sort((a,b) => a.name.localeCompare(b.name, 'de'));
+
+  document.getElementById('az-count').textContent = results.length;
+  const grid = document.getElementById('az-cards-grid');
+
+  if (results.length === 0) {
+    grid.innerHTML = '<div class="az-empty"><span class="emoji">🔍</span><h3>Keine Berufe gefunden</h3><p>Passe die Filter an oder setze sie zurück.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = results.map((d, i) => {
+    const abschlussClass = d.abschluss === 'HSA' ? 'hsa' : d.abschluss === 'MR' ? 'mr' : 'fhr';
+    const kammerClass = d.kammer === 'IHK' ? 'ihk' : d.kammer === 'HWK' ? 'hwk' : d.kammer === 'Schulisch' ? 'sch' : 'ihk';
+    const bibbUrl = `https://www.bibb.de/dienst/berufesuche/de/index_berufesuche.php/source/go/profession.html?dkz=${encodeURIComponent(d.name)}`;
+    const stellenUrl = `https://www.azubi.de/ausbildungsplatz/stadt/stuttgart?beruf=${encodeURIComponent(d.name)}`;
+    const cfg = feldConfig[d.feld] || { icon: '📋' };
+    return `
+<div class="az-card" id="az-card-${i}">
+  <div class="az-card-head" onclick="azToggle(${i})">
+    <div class="az-card-top">
+      <div class="az-card-name">${eld(d.name)}</div>
+      <div class="az-card-badges">
+        <span class="az-badge ${abschlussClass}">${d.abschluss}</span>
+        <span class="az-badge ${kammerClass}">${d.kammer}</span>
+      </div>
+    </div>
+    <div class="az-card-meta">
+      <span class="az-meta-item">⏱ <strong>${d.dauer}</strong></span>
+      <span class="az-feld-tag">${cfg.icon} ${eld(d.feld)}</span>
+    </div>
+    <span class="az-expand-icon" id="az-icon-${i}">▼ mehr</span>
+  </div>
+  <div class="az-card-body" id="az-body-${i}">
+    <p class="az-desc">${eld(d.desc||'')}</p>
+    <div class="az-school-box">
+      <strong>📍 Berufsschule Region Stuttgart:</strong><br>${eld(d.schule)}
+    </div>
+    <div class="az-links-row">
+      <a href="${bibbUrl}" target="_blank" rel="noopener" class="az-link-btn bibb">📘 Infos beim BIBB</a>
+      <a href="${stellenUrl}" target="_blank" rel="noopener" class="az-link-btn stellen">🔍 Stellen Stuttgart</a>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+};
+
+// ============================================
+// TOGGLE CARD
+// ============================================
+window.azToggle = function(i) {
+  const body = document.getElementById('az-body-' + i);
+  const icon = document.getElementById('az-icon-' + i);
+  const isOpen = body.classList.toggle('open');
+  icon.textContent = isOpen ? '▲ weniger' : '▼ mehr';
+};
+
+// ============================================
+// BOOT
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+  azInitStartscreen();
+});
+if (document.readyState !== 'loading') {
+  azInitStartscreen();
+}
+
+})();
+</script>
+
+</div><!-- END azubi-az-tab -->
+
 
 
 <script>
